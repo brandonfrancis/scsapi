@@ -6,7 +6,7 @@ ini_set('display_errors', '1');
 // Make sure we only allow origins from specific sources
 $origin = filter_input(INPUT_SERVER, 'HTTP_ORIGIN');
 if ($origin == 'http://localhost' || $origin == 'https://localhost' ||
-        $origin == 'http://modio.game-tuts.com' || $origin == 'https://modio.game-tuts.com') {
+        $origin == 'http://scs.game-tuts.com' || $origin == 'https://scd.game-tuts.com') {
     header('Access-Control-Allow-Origin: ' . $origin);
 } else if ($origin == '') {
     header('Access-Control-Allow-Origin: http://localhost');
