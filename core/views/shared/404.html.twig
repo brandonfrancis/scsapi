@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+{% set page_title = 'Not Found' %}
+
+{% block content %}
+<div class="section section-primary">
+    <div class="container header-text">
+        Oops, this page could not be found
+    </div>
+</div>
+<div class="section section-dark">
+    <div class="container">
+        The page you request could not be found. <a href="{{ get_path('index') }}">Go Home</a>
+    </div>
+</div>
+{% endblock %}
+

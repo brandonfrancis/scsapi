@@ -1,0 +1,4 @@
+<?php
+
+Routes::set('', 'home#index');
+Routes::set('team', 'team#index');

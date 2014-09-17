@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+{% set page_title = 'Error' %}
+
+{% block content %}
+<div class="section section-primary">
+    <div class="container">
+        Error
+    </div>
+</div>
+<div class="section section-dark">
+    <div class="container">
+        {{ page.message }}
+    </div>
+</div>
+{% endblock %}

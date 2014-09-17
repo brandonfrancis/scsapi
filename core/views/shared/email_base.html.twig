@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ page.subject }}</title>
+        <meta charset="UTF-8">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    </head>
+    <body>
+        <div>
+            <p>
+                Hi {{ page.user.first_name }},
+            </p>
+            <p>
+                {{ page.message|raw }}
+            </p>
+            <p>
+                Love,<br />
+                {{ page.app_name }}
+            </p>
+        </div>
+    </body>
+</html>
