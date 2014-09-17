@@ -159,7 +159,7 @@ class Notification {
     /**
      * Gets the context for the view.
      */
-    public function getViewContext() {
+    public function getContext() {
         return array(
             'id' => $this->getId(),
             'date' => $this->getCreatedTime(),

@@ -150,7 +150,7 @@ class User {
      * template context for every template so that's why this is necessary.
      * @return array
      */
-    public function getTemplateContext() {
+    public function getContext() {
         return array(
             'is_guest' => $this->isGuest(),
             'is_admin' => $this->isAdmin(),

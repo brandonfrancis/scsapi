@@ -41,13 +41,7 @@ class View {
         $loader->addPath(APP_VIEWS_PATH . '/shared');
         $loader->addPath(APP_VIEWS_PATH_CORE);
         $loader->addPath(APP_VIEWS_PATH_CORE . '/shared');
-        if (!DEVELOPMENT_MODE) {
-            $twig = new Twig_Environment($loader, array(
-                'cache' => sys_get_temp_dir(),
-            ));
-        } else {
-            $twig = new Twig_Environment($loader, array('auto_reload' => true));
-        }
+        $twig = new Twig_Environment($loader, array('auto_reload' => true));
 
         // Add in the custom twig functions
         // The getPath function turns controller endpoints into relative
