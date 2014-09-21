@@ -15,7 +15,7 @@ class Auth {
      * Makes sure the user is logged in.
      */
     public static function checkLoggedIn() {
-        if (self::getUser()->isGuest()) {
+        if (Auth::getUser()->isGuest()) {
             throw new Exception('Unauthorized.');
         }
     }
