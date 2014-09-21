@@ -51,7 +51,7 @@ class Cookie {
      */
     public static function set($key, $value) {
         self::initialize();
-        setcookie(self::$prefix . $key, $value, time() + self::COOKIE_EXPIRE_TIME, APP_RELATIVE_URL);
+        setcookie(self::$prefix . $key, $value, time() + self::COOKIE_EXPIRE_TIME, APP_RELATIVE_URL == '' ? '/' : APP_RELATIVE_URL);
     }
 
     /**
@@ -60,7 +60,7 @@ class Cookie {
      */
     public static function delete($key) {
         self::initialize();
-        setcookie(self::$prefix . $key, '', time() - 3600, APP_RELATIVE_URL);
+        setcookie(self::$prefix . $key, '', time() - 3600, APP_RELATIVE_URL == '' ? '/' : APP_RELATIVE_URL);
     }
     
 }

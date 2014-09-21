@@ -49,7 +49,7 @@ define('APP_ABSOLUTE_URL', 'https://localhost');
  *  SHOULD have an initial slash.
  *  Do not include a trailing slash.
  */
-define('APP_RELATIVE_URL', '/');
+define('APP_RELATIVE_URL', '');
 
 /**
  * The way to feed paths to the application.
