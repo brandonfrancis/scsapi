@@ -84,18 +84,22 @@ class user_controller {
     }
     
     function verify() {
-        Auth::checkLoggedIn();
         
         // Get the code from the request
+        $userid = Input::get('userid');
         $code = Input::get('code');
         
+        $user = User::fromId($userid);
+        
         // Do the verification
-        if (!Auth::getUser()->verifyEmail($code)) {
-            throw new Exception('Unable to verify email.');
+        if ($user->isGuest() || !$user->verifyEmail($code)) {
+            echo 'Your email address could not be verified.';
+            exit;
         }
         
         // Output the results
-        View::renderJson(Auth::getUser()->getContext());
+        echo 'Your email address is now verified.';
+        exit;
         
     }
 

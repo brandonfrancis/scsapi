@@ -4,7 +4,7 @@ Routes::set('user/create', 'user#create');
 Routes::set('user/fetch', 'user#fetch');
 Routes::set('user/login', 'user#login');
 Routes::set('user/logout', 'user#logout');
-Routes::set('user/verify', 'user#verify');
+Routes::set('user/verify/{userid}/{code}', 'user#verify', false);
 Routes::set('user/recover', 'user#recover');
 
 /**
@@ -674,7 +674,7 @@ class User {
         $newCode = $this->getNewEmailVerificationCode();
 
         // Now send it to them
-        $url = APP_ABSOLUTE_URL . Routes::getControllerRelativeUrl('user#verify_email',
+        $url = APP_ABSOLUTE_URL . Routes::getControllerRelativeUrl('user#verify',
                 array('userid' => $this->getUserId(), 'code' => $newCode));
         return $this->sendEmail('Please verify your email address',
                 'You can verify your email address by clicking <a href="' . $url . '">here</a>');

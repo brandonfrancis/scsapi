@@ -40,7 +40,7 @@ define('APP_EMAIL', 'noreply@localhost');
  * for sending links in emails.
  * Do not include a trailing slash.
  */
-define('APP_ABSOLUTE_URL', 'https://localhost');
+define('APP_ABSOLUTE_URL', 'https://scsapi.game-tuts.com');
 
 /**
  * The relative url of the website.
