@@ -130,8 +130,8 @@ class PushServer {
         }
         return $this->getJSONResponse(array('mode' => 'get_ticket',
                     'userid' => $user->getUserId(),
-                    'username' => $user->getUsername(),
-                    'usertitle' => $user->getUsertitle()
+                    'full_name' => $user->getFullName(),
+                    'email' => $user->getEmail()
         ));
     }
 
