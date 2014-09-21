@@ -28,7 +28,7 @@ class Push {
      * @return PushServer
      */
     public static function getPushServer(User $user) {
-        return new PushServer('72.8.168.110', 8081, 8082, 'a01bia92912bf9');
+        return new PushServer('localhost', 8081, 8082, 'a01bia92912bf9');
     }
     
 }
