@@ -14,7 +14,7 @@ class Database {
         'database_name' => 'socialcoursesite',
         'charset' => 'utf8',
         'username' => 'coursesiteuser',
-        'password' => 'a@ja9@)Ka0djn@)$!'
+        'password' => '23moa)@3jian@NN'
     );
     
     /**
