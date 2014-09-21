@@ -166,7 +166,6 @@ class User {
             'first_name' => $this->getFirstName(),
             'last_name' => $this->getLastName(),
             'full_name' => $this->getFullName(),
-            'avatar_id' => $this->getAvatarId(),
             'email_verified' => $this->isEmailVerified()
         );
     }
