@@ -28,6 +28,10 @@ class user_controller {
         
     }
     
+    function fetch() {
+        View::renderJson(Auth::getUser()->getContext());
+    }
+    
     function login() {
         
         // Make sure they are not currently logged in
