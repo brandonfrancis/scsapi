@@ -11,9 +11,9 @@ class Database {
     private static $config = array(
         'driver' => 'mysql',
         'host' => 'localhost',
-        'database_name' => 'socialcoursesite',
+        'database_name' => 'scs',
         'charset' => 'utf8',
-        'username' => 'coursesiteuser',
+        'username' => 'scs_user',
         'password' => '23moa)@3jian@NN'
     );
     
