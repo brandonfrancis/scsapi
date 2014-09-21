@@ -83,6 +83,11 @@ class user_controller {
         
     }
     
+    function verify_resend() {
+        Auth::checkLoggedIn();
+        Auth::getUser()->sendVerificationEmail();
+    }
+    
     function verify() {
         
         // Get the code from the request
