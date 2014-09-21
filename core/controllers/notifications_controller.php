@@ -3,10 +3,7 @@
 class notifications_controller {
     
     function get() {
-        // Make sure the user is signed in 
-        if (Auth::getUser()->isGuest()) {
-            throw new Exception('You must sign in to get your notifications.');
-        }
+        Auth::checkLoggedIn();
         
         // Get the notifications
         $notifications = Notification::forUser(Auth::getUser());
@@ -19,10 +16,7 @@ class notifications_controller {
     }
 
     function clear() {
-        // Make sure the user is signed in
-        if (Auth::getUser()->isGuest()) {
-            throw new Exception('You must sign in to clear your notifications.');
-        }
+        Auth::checkLoggedIn();
         
         // Clear the notifications
         Notification::markAllRead(Auth::getUser());
@@ -32,10 +26,7 @@ class notifications_controller {
     }
     
     function get_push_ticket() {
-        // Make sure the user is signed in
-        if (Auth::getUser()->isGuest()) {
-            throw new Exception('You must sign in to connect to the push server.');
-        }
+        Auth::checkLoggedIn();
         
         // Return the ticket
         View::renderJson(Push::getTicket());

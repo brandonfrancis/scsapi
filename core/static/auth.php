@@ -10,6 +10,15 @@ class Auth {
      * @var User
      */
     private static $user = null;
+    
+    /**
+     * Makes sure the user is logged in.
+     */
+    public static function checkLoggedIn() {
+        if (self::getUser()->isGuest()) {
+            throw new Exception('Unauthorized.');
+        }
+    }
 
     /**
      * Make sure the CSRF token exists and is valid.

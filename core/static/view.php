@@ -157,7 +157,7 @@ class View {
      * Renders json and outputs it to the screen. Stops execution.
      * @param mixed $data
      */
-    public static function renderJson($data, $success = true) {
+    public static function renderJson($data = null, $success = true) {
         if (!headers_sent()) {
             if (!$success) {
                 //header('Status: 404 Not Found', true, 404);

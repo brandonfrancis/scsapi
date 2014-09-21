@@ -1,5 +1,11 @@
 <?php
 
+Routes::set('user/create', 'user#create');
+Routes::set('user/login', 'user#login');
+Routes::set('user/logout', 'user#logout');
+Routes::set('user/verify', 'user#verify');
+Routes::set('user/recover', 'user#recover');
+
 /**
  * Class for handling and manipulating users.
  */
@@ -489,83 +495,6 @@ class User {
         
     }
     
-    /**
-     * Sets this user's avatar to an image that has been uploaded already.
-     * @param Image $image The image to set.
-     * @throws Exception
-     */
-    public function setAvatar(Image $image) {
-        
-        // Make sure this user isnt a guest
-        if ($this->isGuest()){
-            return;
-        }
-        
-        // If we're replacing it with the same image just stop here
-        if ($this->getAvatarId() == $image->getId()) {
-            return;
-        }
-        
-        // Delete the previous avatar
-        $this->deleteAvatar();
-        
-        // Update the database with the new avatar id
-        $query = Database::connection()->prepare('UPDATE user SET avatar_id = ? WHERE userid = ?');
-        $query->bindValue(1, $image->getId(), PDO::PARAM_INT);
-        $query->bindValue(2, $this->getUserId(), PDO::PARAM_INT);
-        if (!$query->execute()) {
-            throw new Exception('Unable to set avatar.');
-        }
-        
-        // Set the new id in the local row
-        $this->row['avatar_id'] = $image->getId();
-        
-    }
-    
-    /**
-     * Deletes the user's current avatar.
-     */
-    public function deleteAvatar() {
-        
-        // If this is a guest theres no avatar to delete
-        if ($this->isGuest()) {
-            return;
-        }
-        
-        // Get the current avatar id and make sure it exists
-        $avatarId = $this->getAvatarId();
-        if ($avatarId == null) {
-            return;
-        }
-        
-        // Get the image and delete it
-        $image = Image::fromId($avatarId);
-        $image->delete();
-        
-    }
-    
-    /**
-     * Gets this user's current avatar id.
-     * Will return null if the avatar is not set.
-     * @return int | null
-     */
-    public function getAvatarId() {
-        
-        // If this is a guest there is no avatar
-        if ($this->isGuest()) {
-            return null;
-        }
-        
-        // Make sure the row is not null
-        if (is_numeric($this->row['avatar_id'])) {
-            return $this->row['avatar_id'];
-        }
-        
-        // No avatar to give an id for
-        return null;
-        
-    }
-
     /**
      * Changes the user's current password and sends them an email letting them
      * know that it was changed.
