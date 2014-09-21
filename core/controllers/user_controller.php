@@ -104,6 +104,9 @@ class user_controller {
         
         // Output the results
         echo 'Your email address is now verified.';
+        
+        // Tell the user to refetch the data
+        $user->emit('user_refetch');
         exit;
         
     }

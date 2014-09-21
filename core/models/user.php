@@ -727,8 +727,17 @@ class User {
      */
     public function notify($message, $controller = '', $replacements = array(), $imageUrl = '') {
         $notification = Notification::create($this, $message, $controller, $replacements, $imageUrl);
-        Push::getPushServer(Auth::getUser())->emit($this->getUserId(), 'notification');
+        Push::getPushServer($this)->emit($this->getUserId(), 'notification');
         return $notification;
+    }
+    
+    /**
+     * Emits a push message to this user.
+     * @param string $endpoint The endpoint to push to.
+     * @param object $data The data to push. Optional.
+     */
+    public function emit($endpoint, $data = null) {
+        Push::getPushServer($this)->emit($this->getUserId(), $endpoint, $data);
     }
 
 }
