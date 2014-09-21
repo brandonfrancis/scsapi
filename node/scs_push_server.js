@@ -19,8 +19,8 @@ var http = require('http');
 
 var SETTINGS = {
     'AUTH_KEY': 'a01bia92912bf9',
-    'HTTP_PORT': 8081,
-    'SOCKET_PORT': 8082,
+    'HTTP_PORT': 8083,
+    'SOCKET_PORT': 8084,
     'TICKET_LIFETIME': 3000,
     'SOCKET_LIFETIME': 2000,
     'CHAT_LOG_LENGTH': 30
@@ -101,7 +101,7 @@ PushServer.prototype.handlePostRequest = function(postParts, getParts) {
     if (postParts.mode === 'get_ticket' && postParts.userid !== undefined) {
         
         // Create a temp client
-        var clientInfo = new ClientInfo(String(postParts.userid), String(postParts.username), String(postParts.usertitle));
+        var clientInfo = new ClientInfo(String(postParts.userid), String(postParts.full_name), String(postParts.email));
         var ticket = this.clients.createTicket(clientInfo);
         
         // We handled the request
@@ -127,7 +127,7 @@ PushServer.prototype.handlePostRequest = function(postParts, getParts) {
         if (postParts.user !== undefined) {
             try {
                 var userobj = JSON.parse(postParts.user);
-                obj.user = {userid: userobj.userid, username: userobj.username, usertitle: userobj.usertitle};
+                obj.user = {userid: userobj.userid, name: userobj.full_name, email: userobj.email};
             } catch (Ex) { }
         }
         if (postParts.url !== undefined)
@@ -378,10 +378,10 @@ function Ticket(clientInfo) {
     this.clientInfo = clientInfo;
 }
 
-function ClientInfo(userid, username, usertitle) {
+function ClientInfo(userid, name, email) {
     this.userid = userid;
-    this.username = username;
-    this.usertitle = usertitle;
+    this.name = name;
+    this.email = email;
 }
 
 function getRandomId() {
