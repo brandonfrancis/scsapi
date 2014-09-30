@@ -24,12 +24,12 @@ class user_controller {
         Auth::setUser($user, $password);
         
         // Return the new info
-        View::renderJson($user->getContext());
+        View::renderJson($user->getContext(Auth::getUser()));
         
     }
     
     function fetch() {
-        View::renderJson(Auth::getUser()->getContext());
+        View::renderJson(Auth::getUser()->getContext(Auth::getUser()));
     }
     
     function login() {
@@ -55,7 +55,7 @@ class user_controller {
         Auth::setUser($user, $password);
         
         // Pass back the info for the user
-        View::renderJson(Auth::getUser()->getContext());
+        View::renderJson(Auth::getUser()->getContext(Auth::getUser()));
         
     }
     

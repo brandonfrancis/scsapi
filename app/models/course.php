@@ -60,7 +60,7 @@ class Course {
         
         // Do the query
         $query = Database::connection()->prepare('SELECT course.*, course_user.* FROM course, course_user'
-                . ' WHERE course.courseid = course_user.courseid AND course_user.userid = ?');
+                . ' WHERE course.courseid = course_user.courseid AND course_user.userid = ? ORDER BY course.title');
         $query->bindValue(1, $user->getUserId(), PDO::PARAM_INT);
         if (!$query->execute() || $query->rowCount() == 0) {
             return array();
@@ -122,7 +122,7 @@ class Course {
         
         // Query the database for all of the user rows in the course
         $query = Database::connection()->prepare('SELECT user.*, course_user.is_professor FROM course_user, user '
-                . 'WHERE course_user.courseid = ? AND user.userid = course_user.userid');
+                . 'WHERE course_user.courseid = ? AND user.userid = course_user.userid ORDER BY user.userid');
         $query->bindValue(1, $this->getCourseId(), PDO::PARAM_INT);
         if (!$query->execute() || $query->rowCount() == 0) {
             return array();
@@ -145,6 +145,9 @@ class Course {
         
     }
     
+    /**
+     * Constructs a new Course object.
+     */
     private function __construct() {
         $this->row = null;
         $this->users = null;
@@ -157,11 +160,33 @@ class Course {
      * @return array
      */
     public function getContext(User $user) {
-        return array(
+        $array = array(
             'courseid' => $this->getCourseId(),
             'can_view' => $this->canView($user),
-            'can_edit' => $this->canEdit($user)
+            'can_edit' => $this->canEdit($user),
+            'title' => $this->getTitle(),
+            'code' => $this->getCode()
         );
+        
+        // See if this user can view the course and add the other course info
+        if ($this->canView($user)) {
+            
+            // Add the questions with all of their answers
+            $questions = Question::forCourse($this);
+            $question_contexts = array();
+            foreach ($questions as $question) {
+                $context = $question->getContext($user);
+                if ($context == null) { // checks to see if this user has access to this question
+                    continue;
+                }
+                $question_contexts = array_push($question_contexts, $context);
+            }
+            $array['questions'] = $question_contexts;
+            
+        }
+        
+        // Return the context
+        return $array;
     }
     
     /**
@@ -294,6 +319,9 @@ class Course {
      * @return boolean
      */
     public function canEdit(User $user) {
+        if ($user->isAdmin()) {
+            return true;
+        }
         $this->getCourseUsers();
         return key_exists($user->getUserId(), $this->professors);
     }
@@ -311,6 +339,9 @@ class Course {
      * @param string $newTitle The new title to set.
      */
     public function setTitle($newTitle) {
+        if ($newTitle == $this->getTitle()) {
+            return;
+        }
         $query = Database::connection()->prepare('UPDATE course SET title = ? WHERE courseid = ?');
         $query->bindValue(1, $newTitle, PDO::PARAM_STR);
         $query->bindValue(2, $this->getCourseId(), PDO::PARAM_INT);
@@ -331,6 +362,9 @@ class Course {
      * @param string $newCode The new code to set.
      */
     public function setCode($newCode) {
+        if ($newCode == $this->getCode()) {
+            return;
+        }
         $query = Database::connection()->prepare('UPDATE course SET code = ? WHERE courseid = ?');
         $query->bindValue(1, $newCode, PDO::PARAM_STR);
         $query->bindValue(2, $this->getCourseId(), PDO::PARAM_INT);

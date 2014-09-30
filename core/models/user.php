@@ -23,6 +23,12 @@ class User {
      * @var array 
      */
     private $row = null;
+    
+    /**
+     * A cache for getting user rows.
+     * @var array 
+     */
+    private static $rowCache = array();
 
     /**
      * Gets a user from their userid.
@@ -31,9 +37,7 @@ class User {
      */
     public static function fromId($id) {
         $user = new User();
-        if (is_numeric($id)) {
-            $user->row = self::getRowById($id);
-        }
+        $user->row = self::getRowById($id);
         return $user;
     }
     
@@ -57,9 +61,7 @@ class User {
      */
     public static function fromRow($row) {
         $user = new User();
-        if (is_array($row)) {
-            $user->row = $row;
-        }
+        $user->row = $row;
         return $user;
     }
     
@@ -158,17 +160,20 @@ class User {
      * template context for every template so that's why this is necessary.
      * @return array
      */
-    public function getContext() {
-        return array(
+    public function getContext(User $user) {
+        $array = array(
             'is_guest' => $this->isGuest(),
             'is_admin' => $this->isAdmin(),
             'userid' => $this->getUserId(),
             'email' => $this->getEmail(),
             'first_name' => $this->getFirstName(),
             'last_name' => $this->getLastName(),
-            'full_name' => $this->getFullName(),
-            'email_verified' => $this->isEmailVerified()
+            'full_name' => $this->getFullName()
         );
+        if ($user->isAdmin() || $user->getUserId() == $this->getUserId()) {
+            $array['email_verified'] = $this->isEmailVerified();
+        }
+        return $array;
     }
 
     /**
@@ -177,6 +182,12 @@ class User {
      * @return array
      */
     private static function getRowById($id) {
+        
+        // Check the cache for this row
+        if (key_exists($id, self::$rowCache)) {
+            return self::$rowCache[$id];
+        }
+        
         if ($id == 0) {
             return null;
         }
@@ -185,7 +196,9 @@ class User {
         if (!$query->execute() || $query->rowCount() == 0) {
             return null;
         }
-        return $query->fetch();
+        $row = $query->fetch();
+        self::$rowCache[$id] = $row;
+        return $row;
     }
     
     /**
