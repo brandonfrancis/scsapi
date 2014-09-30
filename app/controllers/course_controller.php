@@ -10,7 +10,7 @@ class course_controller {
         // Transform it into an array of contexts
         $contexts = array();
         foreach ($courses as $course) {
-            $contexts = array_push($contexts, $course->getContext(Auth::getUser()));
+            array_push($contexts, $course->getContext(Auth::getUser()));
         }
         
         // Render all of the contexts

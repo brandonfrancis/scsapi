@@ -127,7 +127,7 @@ class Question {
         $answers = $this->getAnswers();
         $answers_contexts = array();
         foreach ($answers as $answer) {
-            $answers_contexts = array_push($answers_contexts, $answer->getContext($user));
+            array_push($answers_contexts, $answer->getContext($user));
         }
         return array(   
             'questionid' => $this->getQuestionId(),
@@ -358,7 +358,7 @@ class QuestionAnswer {
         $answers = array();
         $result = $query->fetchAll();
         foreach ($result as $row) {
-            $answers = array_push($answers, self::fromRow($row));
+            array_push($answers, self::fromRow($row));
         }
         
         // Return the array

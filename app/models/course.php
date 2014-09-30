@@ -70,7 +70,7 @@ class Course {
         $courses = array();
         $result = $query->fetchAll();
         foreach ($result as $row) {
-            $courses = array_push($courses, self::fromRow($row));
+             array_push($courses, self::fromRow($row));
         }
         
         // Return the array
@@ -179,7 +179,7 @@ class Course {
                 if ($context == null) { // checks to see if this user has access to this question
                     continue;
                 }
-                $question_contexts = array_push($question_contexts, $context);
+                array_push($question_contexts, $context);
             }
             $array['questions'] = $question_contexts;
             
