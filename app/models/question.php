@@ -46,7 +46,7 @@ class Question {
         $questions = array();
         $result = $query->fetchAll();
         foreach ($result as $row) {
-            $questions = array_push($questions, Question::fromRow($row));
+            array_push($questions, Question::fromRow($row));
         }
         
         // Return the result
