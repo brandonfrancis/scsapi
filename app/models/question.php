@@ -332,10 +332,10 @@ class QuestionAnswer {
     /**
      * Gets an answer given its unique row.
      * @param array $row The database row to use.
-     * @return Answer
+     * @return QuestionAnswer
      */
     public static function fromRow($row) {
-        $answer = new Answer();
+        $answer = new QuestionAnswer();
         $answer->row = $row;
         return $answer;
     }
@@ -343,7 +343,7 @@ class QuestionAnswer {
     /**
      * Gets an array of answers for the given question.
      * @param Question $question The question to use.
-     * @return Answer[]
+     * @return QuestionAnswer[]
      */
     public static function forQuestion(Question $question) {
         
