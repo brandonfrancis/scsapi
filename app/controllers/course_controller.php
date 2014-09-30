@@ -1,6 +1,6 @@
 <?php
 
-class class_controller {
+class course_controller {
     
     function get_list() {
         
