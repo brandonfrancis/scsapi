@@ -31,6 +31,15 @@ class Utils {
     public static function isValidEmail($email) {
         return filter_var($email, FILTER_VALIDATE_EMAIL);
     }
+    
+    /**
+     * Removes all whitespace in a string and returns the result.
+     * @param string $string The string to remove the whitespace from.
+     * @return string
+     */
+    public static function removeWhitespace($string) {
+        return preg_replace('/\s+/', '', $string);
+    }
 
     /**
      * Makes a string into a search engine friendly string to put in a url.

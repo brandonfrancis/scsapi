@@ -1,5 +1,9 @@
 <?php
 
+Routes::set('course/get_list', 'course#get_list');
+Routes::set('course/get', 'course#get');
+Routes::set('course/add_students', 'course#add_students');
+
 /**
  * Represents a school course.
  */
@@ -213,9 +217,10 @@ class Course {
      * @throws Exception
      */
     private function addUser(User $user, $is_professor) {
+        $is_professor = boolval($is_professor);
         
         // Make sure the user isn't already in the course
-        if ($this->canView($user)) {
+        if ($this->canView($user) || $user->isGuest()) {
             return;
         }
         
@@ -223,11 +228,19 @@ class Course {
         $query = Database::connection()->prepare('INSERT INTO course_user (courseid, userid, is_professor, created_at) VALUES (?, ?, ?, ?)');
         $query->bindValue(1, $this->getCourseId(), PDO::PARAM_INT);
         $query->bindValue(2, $user->getUserId(), PDO::PARAM_INT);
-        $query->bindValue(3, boolval($is_professor), PDO::PARAM_BOOL);
+        $query->bindValue(3, $is_professor, PDO::PARAM_BOOL);
         $query->bindValue(4, time(), PDO::PARAM_INT);
         if (!$query->execute()) {
             throw new Exception('Could not add user to course.');
         }
+        
+        // Add them to the local array
+        if ($is_professor) {
+            $this->professors[$user->getUserId()] = $user;
+        } else {
+            $this->users[$user->getUserId()] = $user;
+        }
+        
     }
     
     /**
@@ -254,6 +267,15 @@ class Course {
         if (!$query->execute()) {
             throw new Exception('Could not remove user from course.');
         }
+        
+        // Remove them from the local arrays
+        if (key_exists($user->getUserId(), $this->professors)) {
+            unset($this->professors[$user->getUserId()]);
+        }
+        if (key_exists($user->getUserId(), $this->users)) {
+            unset($this->users[$user->getUserId()]);
+        }
+        
     }
     
     /**
