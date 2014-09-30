@@ -26,8 +26,8 @@ class Notification {
     private $row = null;
     
     /**
-     * Gets a notification given it's unique id.
-     * @param type $notificationid The notification id.
+     * Gets a notification given its unique id.
+     * @param int $notificationid The notification id.
      * @return \Notification
      */
     public static function fromId($notificationid) {
@@ -174,7 +174,7 @@ class Notification {
      * Gets the id of this notification.
      */
     public function getId() {
-        return $this->row['notificationid'];
+        return intval($this->row['notificationid']);
     }
     
     /**
