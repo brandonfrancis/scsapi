@@ -111,6 +111,11 @@ PushServer.prototype.handlePostRequest = function(postParts, getParts) {
             postParts.endpoint !== undefined &&
             postParts.userid !==  undefined) {
         
+        if (postParts.data !== undefined) {
+            try {
+                postParts.data = JSON.parse(postParts.data);
+            } catch (Ex) { }
+        }
         var success = this.clients.emit(postParts.userid, postParts.endpoint, postParts.data);
         
         // If at least one suitable client was found, return a success

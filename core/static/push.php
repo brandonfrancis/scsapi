@@ -145,7 +145,7 @@ class PushServer {
     public function emit($userid, $endpoint, $data = null) {
         $array = array('mode' => 'emit', 'userid' => $userid, 'endpoint' => $endpoint);
         if ($data !== null) {
-            $array['data'] = $data;
+            $array['data'] = json_encode($data);
         }
         return $this->getJSONResponse($array);
     }
