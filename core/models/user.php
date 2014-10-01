@@ -189,12 +189,6 @@ class User {
      * @return array
      */
     private static function getRowById($id) {
-        
-        // Check the cache for this row
-        if (key_exists($id, self::$rowCache)) {
-            return self::$rowCache[$id];
-        }
-        
         if ($id == 0) {
             return null;
         }
@@ -204,7 +198,6 @@ class User {
             return null;
         }
         $row = $query->fetch();
-        self::$rowCache[$id] = $row;
         return $row;
     }
     
