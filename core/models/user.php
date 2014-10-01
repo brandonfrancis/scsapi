@@ -23,12 +23,6 @@ class User {
      * @var array 
      */
     private $row = null;
-    
-    /**
-     * A cache for getting user rows.
-     * @var array 
-     */
-    private static $rowCache = array();
 
     /**
      * Gets a user from their userid.
@@ -36,8 +30,19 @@ class User {
      * @return User
      */
     public static function fromId($id) {
+        
+        // See if there's a cache hit
+        $cached = ObjCache::get(OBJCACHE_TYPE_USER, $id);
+        if ($cached != null) {
+            return $cached;
+        }
+        
+        // Create the user
         $user = new User();
         $user->row = self::getRowById($id);
+        
+        // Add it to the cache
+        ObjCache::set(OBJCACHE_TYPE_USER, $user->getUserId(), $user);
         return $user;
     }
     
@@ -51,6 +56,7 @@ class User {
         if (Utils::isValidEmail($email)) {
             $user->row = self::getRowByEmail($email);
         } 
+        ObjCache::set(OBJCACHE_TYPE_USER, $user->getUserId(), $user);
         return $user;
     }
     
@@ -62,6 +68,7 @@ class User {
     public static function fromRow($row) {
         $user = new User();
         $user->row = $row;
+        ObjCache::set(OBJCACHE_TYPE_USER, $user->getUserId(), $user);
         return $user;
     }
     

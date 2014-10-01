@@ -22,11 +22,21 @@ class Question {
      * @return Question
      */
     public static function fromId($questionid) {
+                
+        // See if theres a cache hit
+        $cached = ObjCache::get(OBJCACHE_TYPE_QUESTION, $questionid);
+        if ($cached != null) {
+            return $cached;
+        }
+        
+        // Do the database query
         $query = Database::connection()->prepare('SELECT * FROM question WHERE questionid = ?');
         $query->bindValue(1, $questionid, PDO::PARAM_INT);
         if (!$query->execute() || $query->rowCount() == 0) {
             throw new Exception('Question does not exist.');
         }
+        
+        // Return it
         return self::fromRow($query->fetch());
     }
     
@@ -61,6 +71,7 @@ class Question {
     public static function fromRow($row) {
         $question = new Question();
         $question->row = $row;
+        ObjCache::set(OBJCACHE_TYPE_QUESTION, $question->getQuestionId(), $question);
         return $question;
     }
     
@@ -321,6 +332,14 @@ class QuestionAnswer {
      * @return Answer
      */
     public static function fromId($answerid) {
+                
+        // See if theres a cache hit
+        $cached = ObjCache::get(OBJCACHE_TYPE_ANSWER, $answerid);
+        if ($cached != null) {
+            return $cached;
+        }
+        
+        // Do the database query
         $query = Database::connection()->prepare('SELECT * FROM question_answer WHERE answerid = ?');
         $query->bindValue(1, $answerid, PDO::PARAM_INT);
         if (!$query->execute() || $query->rowCount() == 0) {
@@ -337,6 +356,7 @@ class QuestionAnswer {
     public static function fromRow($row) {
         $answer = new QuestionAnswer();
         $answer->row = $row;
+        ObjCache::set(OBJCACHE_TYPE_ANSWER, $answer->getAnswerId(), $answer);
         return $answer;
     }
     

@@ -32,11 +32,21 @@ class Course {
      * @return Course
      */
     public static function fromId($courseid) {
+        
+        // See if theres a cache hit
+        $cached = ObjCache::get(OBJCACHE_TYPE_COURSE, $courseid);
+        if ($cached != null) {
+            return $cached;
+        }
+        
+        // Do the database query
         $query = Database::connection()->prepare('SELECT * FROM course WHERE courseid = ?');
         $query->bindValue(1, $courseid, PDO::PARAM_INT);
         if (!$query->execute() || $query->rowCount() == 0) {
             throw new Exception('Course does not exist.');
         }
+        
+        // Cache it and return
         return self::fromRow($query->fetch());
     }
     
@@ -48,6 +58,7 @@ class Course {
     public static function fromRow($row) {
         $course = new Course();
         $course->row = $row;
+        ObjCache::set(OBJCACHE_TYPE_COURSE, $course->getCourseId(), $course);
         return $course;
     }
     
@@ -70,7 +81,7 @@ class Course {
         $courses = array();
         $result = $query->fetchAll();
         foreach ($result as $row) {
-             array_push($courses, self::fromRow($row));
+            array_push($courses, self::fromRow($row));
         }
         
         // Return the array
@@ -106,6 +117,25 @@ class Course {
         
         // Return the course
         return $course;
+        
+    }
+    
+    /**
+     * Called when this course has been updated in any way that should be
+     * broadcast to all students and professors in the class.
+     */
+    public function perform_sync() {
+        
+        // Let's make sure we have the users
+        $this->getCourseUsers();
+        
+        // Go through all of the students and professors
+        foreach ($this->users as $user) {
+            Sync::emit($user, 'course', $this->getCourseId());
+        }
+        foreach ($this->professors as $user) {
+            Sync::emit($user, 'course', $this->getCourseId());
+        }
         
     }
     
@@ -266,6 +296,9 @@ class Course {
             $this->users[$user->getUserId()] = $user;
         }
         
+        // We should now sync
+        Sync::course($this);
+        
     }
     
     /**
@@ -300,6 +333,9 @@ class Course {
         if (key_exists($user->getUserId(), $this->users)) {
             unset($this->users[$user->getUserId()]);
         }
+        
+        // Now let's sync
+        Sync::course($this);
         
     }
     
@@ -347,6 +383,7 @@ class Course {
         $query->bindValue(2, $this->getCourseId(), PDO::PARAM_INT);
         $query->execute();
         $this->row['title'] = $newTitle;
+        Sync::course($this);
     }
     
     /**
@@ -370,6 +407,7 @@ class Course {
         $query->bindValue(2, $this->getCourseId(), PDO::PARAM_INT);
         $query->execute();
         $this->row['code'] = $newCode;
+        Sync::course($this);
     }
     
 }
