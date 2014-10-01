@@ -24,7 +24,7 @@ class Sync {
      * @param object $context The context to emit.
      */
     public static function emit(User $user, $type, $id, $context) {
-        $user->emit('sync', array('type' => $type, 'id' => $id));
+        $user->emit('sync', array('type' => $type, 'id' => $id, 'context' => $context));
     }
 
     /**
