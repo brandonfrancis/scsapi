@@ -103,10 +103,11 @@ class Question {
         $question = Question::fromId(Database::connection()->lastInsertId());
         
         // Now create the first answer to the question
+        $answer = null;
         try {
             
             // Create the answer
-            QuestionAnswer::create($question, $creator, $text);
+            $answer = QuestionAnswer::create($question, $creator, $text);
             
         } catch (Exception $ex) {
             
@@ -116,8 +117,20 @@ class Question {
             
         }
         
-        // Return the question that was created
+        // Now set the first answer for the question
+        $query = Database::connection()->prepare('UPDATE question SET first_answer = ? WHERE questionid = ?');
+        $query->bindValue(1, $answer->getAnswerId(), PDO::PARAM_INT);
+        $query->bindValue(2, $question->getQuestionId(), PDO::PARAM_INT);
+        if (!$query->execute()) {
+            Database::connection()->rollBack();
+            throw new Exception('Could not set first answer field.');
+        }
+        
+        // Commit to the database and set the question as changed
+        Database::connection()->commit();
         $question->changed();
+        
+        // Return the created question
         return $question;
         
     }
