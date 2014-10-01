@@ -132,10 +132,10 @@ class Course {
         
         // Go through all of the students and professors
         foreach ($this->users as $user) {
-            Sync::emit($user, 'course', $this->getCourseId());
+            Sync::emit($user, 'course', $this->getCourseId(), $this->getContext($user));
         }
         foreach ($this->professors as $user) {
-            Sync::emit($user, 'course', $this->getCourseId());
+            Sync::emit($user, 'course', $this->getCourseId(), $this->getContext($user));
         }
         
     }

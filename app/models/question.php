@@ -116,6 +116,10 @@ class Question {
             
         }
         
+        // Return the question that was created
+        $question->changed();
+        return $question;
+        
     }
     
     /**
@@ -433,7 +437,9 @@ class QuestionAnswer {
         $question->invalidateAnswerCache();
         
         // Return the question
-        return self::fromId(Database::connection()->lastInsertId());
+        $answer = self::fromId(Database::connection()->lastInsertId());
+        $answer->changed();
+        return $answer;
         
     }
     

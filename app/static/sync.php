@@ -21,8 +21,9 @@ class Sync {
      * @param User $user The user.
      * @param string $type The type of sync.
      * @param string $id The id to use.
+     * @param object $context The context to emit.
      */
-    public static function emit(User $user, $type, $id) {
+    public static function emit(User $user, $type, $id, $context) {
         $user->emit('sync', array('type' => $type, 'id' => $id));
     }
 
