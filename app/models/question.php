@@ -119,6 +119,13 @@ class Question {
     }
     
     /**
+     * Gets called when the question changes.
+     */
+    private function changed() {
+        Sync::course(Course::fromId($this->getCourseId()));
+    }
+    
+    /**
      * Constructs a new Question object.
      */
     private function __construct() {
@@ -227,6 +234,7 @@ class Question {
         $query->bindValue(2, $this->getQuestionId(), PDO::PARAM_INT);
         $query->execute();
         $this->row['is_private'] = $value;
+        $this->changed();
     }
     
     /**
@@ -251,6 +259,7 @@ class Question {
         $query->bindValue(2, $this->getQuestionId(), PDO::PARAM_INT);
         $query->execute();
         $this->row['is_closed'] = $value;
+        $this->changed();
     }
     
     /**
@@ -447,6 +456,15 @@ class QuestionAnswer {
     }
     
     /**
+     * Gets called when this answer changes.
+     */
+    private function changed() {
+        $question = Question::fromId($this->getQuestionId());
+        $course = Course::fromId($question->getCourseId());
+        Sync::course($course);
+    }
+    
+    /**
      * Returns the context for this answer.
      * @return array
      */
@@ -461,6 +479,33 @@ class QuestionAnswer {
             'edited_by' => User::fromId($this->getEditorUserid())->getContext($user),
             'text' => $this->getText()
         );
+    }
+    
+    /**
+     * Edits the text of this answer.
+     * @param User $editor The user who is doing the editing.
+     * @param string $newText The new text.
+     */
+    public function edit(User $editor, $newText) {
+        
+        // Do some cleaning up
+        $newText = self::sanitateText($newText);
+        if (!self::checkText($newText)) {
+            throw new Exception('New text is not good.');
+        }
+        
+        // Perform the database update
+        $query = Database::connection()->prepare('UPDATE question_answer SET edited_at = ?, edited_by = ?, text = ? WHERE answerid = ?');
+        $query->bindValue(1, time(), PDO::PARAM_INT);
+        $query->bindValue(2, $editor->getUserId(), PDO::PARAM_INT);
+        $query->bindValue(3, $newText, PDO::PARAM_STR);
+        $query->bindValue(4, $this->getAnswerId(), PDO::PARAM_INT);
+        $query->execute();
+        
+        // Set the local values
+        $this->row['text'] = $newText;
+        $this->changed();
+        
     }
     
     /**

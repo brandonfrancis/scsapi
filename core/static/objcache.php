@@ -51,5 +51,14 @@ class ObjCache {
         }
         return self::$cache[$type][$key];
     }
+    
+    /**
+     * Invalidates a cache entry.
+     * @param object $type The type of cache to use.
+     * @param object $key The key to use.
+     */
+    public static function invalidate($type, $key) {
+        self::set($type, $key, null);
+    }
 
 }

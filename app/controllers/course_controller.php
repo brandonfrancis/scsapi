@@ -30,11 +30,28 @@ class course_controller {
         View::renderJson($course->getContext(Auth::getUser()));
     }
     
+    function update() {
+        
+        // Get the course and make sure the user can edit it
+        $course = Course::fromId(Input::get('courseid'));
+        if (!$course->canEdit(Auth::getUser())) {
+            throw new Exception('You cannot update this course.');
+        }
+        
+        // Set the new info
+        $course->setTitle(Input::get('title'));
+        $course->setCode(Input::get('code'));
+        
+        // Give back the new context
+        View::renderJson($course->getContext(Auth::getUser()));
+        
+    }
+    
     function add_students() {
         
         // Get the course and make sure the user can edit it
         $course = Course::fromId(Input::get('courseid'));
-        if ($course->canEdit(Auth::getUser())) {
+        if (!$course->canEdit(Auth::getUser())) {
             throw new Exception('You cannot add users to this course.');
         }
         

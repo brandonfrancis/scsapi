@@ -2,6 +2,7 @@
 
 Routes::set('course/get_list', 'course#get_list');
 Routes::set('course/get', 'course#get');
+Routes::set('course/update', 'course#update');
 Routes::set('course/add_students', 'course#add_students');
 
 /**
@@ -176,6 +177,13 @@ class Course {
     }
     
     /**
+     * Gets called when this course changes.
+     */
+    private function changed() {
+        Sync::course($this);
+    }
+    
+    /**
      * Constructs a new Course object.
      */
     private function __construct() {
@@ -297,7 +305,7 @@ class Course {
         }
         
         // We should now sync
-        Sync::course($this);
+        $this->changed();
         
     }
     
@@ -335,7 +343,7 @@ class Course {
         }
         
         // Now let's sync
-        Sync::course($this);
+        $this->changed();
         
     }
     
@@ -383,7 +391,7 @@ class Course {
         $query->bindValue(2, $this->getCourseId(), PDO::PARAM_INT);
         $query->execute();
         $this->row['title'] = $newTitle;
-        Sync::course($this);
+        $this->changed();
     }
     
     /**
@@ -407,7 +415,7 @@ class Course {
         $query->bindValue(2, $this->getCourseId(), PDO::PARAM_INT);
         $query->execute();
         $this->row['code'] = $newCode;
-        Sync::course($this);
+        $this->changed();
     }
     
 }
