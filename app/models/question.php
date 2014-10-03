@@ -167,6 +167,7 @@ class Question {
         return array(   
             'questionid' => $this->getQuestionId(),
             'courseid' => $this->getCourseId(),
+            'title' => $this->getTitle(),
             'part_of_assignment' => $this->belongsToAssignment(),
             'assignmentid' => $this->getAssignmentId(),
             'is_private' => $this->isPrivate(),
@@ -208,6 +209,30 @@ class Question {
      */
     public function getCourseId() {
         return intval($this->row['courseid']);
+    }
+    
+    /**
+     * Gets the title of this question.
+     * @return string
+     */
+    public function getTitle() {
+        return $this->row['title'];
+    }
+    
+    /**
+     * Sets the title of this question.
+     * @param string $newTitle The new title to set.
+     */
+    public function setTitle($newTitle) {
+        if ($newTitle == $this->getTitle()) {
+            return;
+        }
+        $query = Database::connection()->prepare('UPDATE question SET title = ? WHERE questionid = ?');
+        $query->bindValue(1, $newTitle, PDO::PARAM_STR);
+        $query->bindValue(2, $this->getQuestionId(), PDO::PARAM_INT);
+        $query->execute();
+        $this->row['title'] = $newTitle;
+        $this->changed();
     }
     
     /**
