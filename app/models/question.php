@@ -1,5 +1,14 @@
 <?php
 
+Routes::set('question/get', 'question#get');
+Routes::set('question/create', 'question#create');
+Routes::set('question/delete', 'question#delete');
+Routes::set('question/edit', 'question#edit');
+Routes::set('answer/get', 'question#get_answer');
+Routes::set('answer/create', 'question#create_answer');
+Routes::set('answer/delete', 'question#delete_answer');
+Routes::set('answer/edit', 'question#edit_answer');
+
 /**
  * Represnets a question that can be asked.
  */
@@ -135,6 +144,17 @@ class Question {
         
     }
     
+     /**
+     * Deletes this question.
+     */
+    public function delete() {
+        $query = Database::connection()->prepare('DELETE FROM question WHERE questionid = ?');
+        $query->bindValue(1, $this->getQuestionId(), PDO::PARAM_INT);
+        $query->execute();
+        $this->changed();
+        ObjCache::invalidate(OBJCACHE_TYPE_QUESTION, $this->getQuestionId());
+    }
+    
     /**
      * Gets called when the question changes.
      */
@@ -255,6 +275,14 @@ class Question {
     }
     
     /**
+     * Gets the id of the first answer for this question.
+     * @return int
+     */
+    public function getFirstAnswerId() {
+        return intval($this->row['first_answer']);
+    }
+    
+    /**
      * Determines whether or not this question is private.
      * @return boolean
      */
@@ -352,8 +380,8 @@ class Question {
 
         // If this question is closed we need to dig deeper
         if ($this->isClosed()) {
-            
-            // See if they can edit the course
+
+            // See if they are a professor for the course
             $course = Course::fromId($this->getCourseId());
             if (!$course->canEdit($user)) {
                 return false;
@@ -364,7 +392,30 @@ class Question {
         // They can answer the question
         return true;
     }
-    
+
+    /**
+     * Determines whether or not a given user can edit the question.
+     * @param User $user The user to check.
+     * @return boolean
+     */
+    public function canEdit(User $user) {
+
+        // See if they are a professor for the course
+        $course = Course::fromId($this->getCourseId());
+        if ($course->canEdit($user)) {
+            return true;
+        }
+
+        // See if they asked the question
+        $firstAnswer = QuestionAnswer::fromId($this->getFirstAnswerId());
+        if ($firstAnswer->getUserId() == $user->getUserId()) {
+            return true;
+        }
+        
+        // They cannot edit
+        return false;
+    }
+
 }
 
 /**
@@ -504,6 +555,7 @@ class QuestionAnswer {
      */
     private function changed() {
         $question = Question::fromId($this->getQuestionId());
+        $question->invalidateAnswerCache();
         $course = Course::fromId($question->getCourseId());
         Sync::course($course);
     }
@@ -550,6 +602,17 @@ class QuestionAnswer {
         $this->row['text'] = $newText;
         $this->changed();
         
+    }
+    
+    /**
+     * Deletes this answer.
+     */
+    public function delete() {
+        $query = Database::connection()->prepare('DELETE FROM question_answer WHERE answerid = ?');
+        $query->bindValue(1, $this->getAnswerId(), PDO::PARAM_INT);
+        $query->execute();
+        $this->changed();
+        ObjCache::invalidate(OBJCACHE_TYPE_ANSWER, $this->getAnswerId());
     }
     
     /**
@@ -614,6 +677,32 @@ class QuestionAnswer {
      */
     public function getText() {
         return $this->row['text'];
+    }
+    
+    /**
+     * Determines whether or not a user can view this answer.
+     * @param User $user The user to check.
+     * @return boolean
+     */
+    public function canView(User $user) {
+        if ($user->getUserId() == $this->getUserId()) {
+            return true;
+        }
+        $question = Question::fromId($this->getQuestionId());
+        return $question->canView($user);
+    }
+    
+    /**
+     * Determines whether or not a user can edit this answer.
+     * @param User $user The user to check.
+     * @return boolean
+     */
+    public function canEdit(User $user) {
+        if ($user->getUserId() == $this->getUserId()) {
+            return true;
+        }
+        $question = Question::fromId($this->getQuestionId());
+        return $question->canEdit($user);
     }
     
 }

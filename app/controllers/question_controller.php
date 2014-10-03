@@ -1,0 +1,84 @@
+<?php
+
+class question_controller {
+    
+    function get() {
+        Auth::checkLoggedIn();
+        $question = Question::fromId(Input::get('questionid'));
+        if (!$question->canView(Auth::getUser())) {
+            throw new Exception('You are not allowed to view this question.');
+        }
+        View::renderJson($question->getContext(Auth::getUser()));
+    }
+    
+    function create() {
+        Auth::checkLoggedIn();
+        $course = Course::fromId(Input::get('courseid'));
+        if (!$course->canView(Auth::getUser())) {
+            throw new Exception('You are not allowed to ask a question in this course.');
+        }
+        $question = Question::create(Auth::getUser(), $course, Input::get('text'));
+        View::renderJson($question->getContext(Auth::getUser()));
+    }
+    
+    function delete() {
+        Auth::checkLoggedIn();
+        $question = Question::fromId(Input::get('questionid'));
+        if (!$question->canEdit(Auth::getUser())) {
+            throw new Exception('You are not allowed to delete this question.');
+        }
+        $question->delete();
+        View::renderJson();
+    }
+    
+    function edit() {
+        Auth::checkLoggedIn();
+        $question = Question::fromId(Input::get('questionid'));
+        if (!$question->canEdit(Auth::getUser())) {
+            throw new Exception('You are not allowed to edit this question.');
+        }
+        $question->setTitle(Input::get('title'));
+        view::renderJson($question->getContext(Auth::getUser()));
+    }
+    
+    function get_answer() {
+        Auth::checkLoggedIn();
+        $answer = QuestionAnswer::fromId(Input::get('answerid'));
+        if (!$answer->canView(Auth::getUser())) {
+            throw new Exception('You are not allowed to view this answer.');
+        }
+        View::renderJson($answer->getContext(Auth::getUser()));
+    }
+    
+    function create_answer() {
+        Auth::checkLoggedIn();
+        $question = Question::fromId(Input::get('questionid'));
+        if (!$question->canAnswer(Auth::getUser())) {
+            throw new Exception('You are not allowed to answer this question.');
+        }
+        $answer = QuestionAnswer::create($question, Auth::getUser(), Input::get('text'));
+        View::renderJson($answer->getContext(Auth::getUser()));
+    }
+    
+    function delete_answer() {
+        Auth::checkLoggedIn();
+        $answer = QuestionAnswer::fromId(Input::get('answerid'));
+        if (!$answer->canEdit(Auth::getUser())) {
+            throw new Exception('You are not allowed to delete this answer.');
+        }
+        $answer->delete();
+        View::renderJson();
+    }
+    
+    function edit_answer() {
+        Auth::checkLoggedIn();
+        $answer = QuestionAnswer::fromId(Input::get('answerid'));
+        if (!$answer->canEdit(Auth::getUser())) {
+            throw new Exception('You are not allowed to edit this answer.');
+        }
+        $answer->edit(Auth::getUser(), Input::get('text'));
+        View::renderJson($answer->getContext(Auth::getUser()));
+    }
+    
+}
+

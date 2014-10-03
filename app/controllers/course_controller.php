@@ -3,6 +3,7 @@
 class course_controller {
     
     function get_list() {
+        Auth::checkLoggedIn();
         
         // Get all of the courses for the user
         $courses = Course::forUser(Auth::getUser());
@@ -18,6 +19,8 @@ class course_controller {
     }
     
     function get() {
+        Auth::checkLoggedIn();
+        
         // Get the course from the id given
         $course = Course::fromId(Input::get('courseid'));
         
@@ -31,6 +34,7 @@ class course_controller {
     }
     
     function update() {
+        Auth::checkLoggedIn();
         
         // Get the course and make sure the user can edit it
         $course = Course::fromId(Input::get('courseid'));
@@ -48,6 +52,7 @@ class course_controller {
     }
     
     function add_students() {
+        Auth::checkLoggedIn();
         
         // Get the course and make sure the user can edit it
         $course = Course::fromId(Input::get('courseid'));
