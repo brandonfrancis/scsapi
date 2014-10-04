@@ -2,7 +2,7 @@
 
 Routes::set('course/get_list', 'course#get_list');
 Routes::set('course/get', 'course#get');
-Routes::set('course/update', 'course#update');
+Routes::set('course/edit', 'course#edit');
 Routes::set('course/add_students', 'course#add_students');
 
 /**

@@ -17,7 +17,7 @@ class question_controller {
         if (!$course->canView(Auth::getUser())) {
             throw new Exception('You are not allowed to ask a question in this course.');
         }
-        $question = Question::create(Auth::getUser(), $course, Input::get('text'));
+        $question = Question::create(Auth::getUser(), $course, Input::get('title'), Input::get('text'), Input::getBoolean('private'));
         View::renderJson($question->getContext(Auth::getUser()));
     }
     

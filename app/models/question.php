@@ -88,21 +88,23 @@ class Question {
      * Creates a new question.
      * @param User $creator The asker.
      * @param Course $course The course it belongs to.
+     * @param string $title The title for the question being asked.
      * @param string $text The text of the question being asked.
      * @param boolean $private Whether or not this question is private.
      * @throws Exception
      */
-    public static function create(User $creator, Course $course, $text, $private = false) {
+    public static function create(User $creator, Course $course, $title, $text, $private = false) {
         $private = boolval($private);
         
         // Start the transaction
         Database::connection()->beginTransaction();
         
         // Do the database insert
-        $query = Database::connection()->prepare('INSERT INTO question (courseid, is_private, created_at) VALUES (?, ?, ?)');
+        $query = Database::connection()->prepare('INSERT INTO question (courseid, is_private, created_at, title) VALUES (?, ?, ?, ?)');
         $query->bindValue(1, $course->getCourseId(), PDO::PARAM_INT);
         $query->bindValue(2, $private, PDO::PARAM_BOOL);
         $query->bindValue(3, time(), PDO::PARAM_INT);
+        $query->bindValue(4, $title, PDO::PARAM_STR);
         if (!$query->execute()) {
             Database::connection()->rollBack();
             throw new Exception('Question could not be inserted into the database.');

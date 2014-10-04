@@ -33,7 +33,7 @@ class course_controller {
         View::renderJson($course->getContext(Auth::getUser()));
     }
     
-    function update() {
+    function edit() {
         Auth::checkLoggedIn();
         
         // Get the course and make sure the user can edit it
