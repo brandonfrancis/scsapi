@@ -81,7 +81,9 @@ class Utils {
      * @return int
      */
     public static function beginningOfDayTime($time) {
-        return strtotime("midnight", $time);
+        $date = new DateTime();
+        $date->setTimestamp($time);
+        return mktime(0, 0, 0, $date->format('n'), $date->format('j'), $date->format('Y'));
     }
     
     /**
@@ -90,7 +92,9 @@ class Utils {
      * @return int
      */
     public static function endOfDayTime($time) {
-        return strtotime("tomorrow", self::beginningOfDayTime($time)) - 1;
+        $date = new DateTime();
+        $date->setTimestamp($time);
+        return mktime(23, 59, 59, $date->format('n'), $date->format('j'), $date->format('Y'));
     }
 
     /**
