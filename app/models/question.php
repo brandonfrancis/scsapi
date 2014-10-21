@@ -264,26 +264,7 @@ class Question {
         $this->row['title'] = $newTitle;
         $this->changed();
     }
-    
-    /**
-     * Determines whether or not this question belongs to an assignment.
-     * @return boolean
-     */
-    public function belongsToAssignment() {
-        return $this->row['assignmentid'] != null;
-    }
-    
-    /**
-     * Gets the assignment id of this question if it exists.
-     * @return int
-     */
-    public function getAssignmentId() {
-        if (!$this->belongsToAssignment()) {
-            return 0;
-        }
-        return intval($this->row['assignmentid']);
-    }
-    
+        
     /**
      * Gets the id of the first answer for this question.
      * @return int
