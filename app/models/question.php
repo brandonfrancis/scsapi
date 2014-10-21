@@ -188,7 +188,6 @@ class Question {
         }
         return array(   
             'questionid' => $this->getQuestionId(),
-            'courseid' => $this->getCourseId(),
             'title' => $this->getTitle(),
             'part_of_assignment' => $this->belongsToAssignment(),
             'assignmentid' => $this->getAssignmentId(),
@@ -230,7 +229,16 @@ class Question {
      * @return int
      */
     public function getCourseId() {
-        return intval($this->row['courseid']);
+        $entry = Entry::fromId($this->getEntryId());
+        return $entry->getCourseId();
+    }
+    
+    /**
+     * Gets the id of the entry this question belongs to.
+     * @return int
+     */
+    public function getEntryId() {
+        return intval($this->row['entryid']);
     }
     
     /**
@@ -342,8 +350,8 @@ class Question {
     public function canView(User $user) {
         
         // Make sure they are in the course
-        $course = Course::fromId($this->getCourseId());
-        if (!$course->canView($user)) {
+        $entry = Entry::fromId($this->getEntryId());
+        if (!$entry->canView($user)) {
             return false;
         }
         
@@ -351,7 +359,7 @@ class Question {
         if ($this->isPrivate()) {
             
             // See if they are the professor
-            if ($course->canEdit($user)) {
+            if ($entry->canEdit($user)) {
                 return true;
             }
             
@@ -403,8 +411,8 @@ class Question {
     public function canEdit(User $user) {
 
         // See if they are a professor for the course
-        $course = Course::fromId($this->getCourseId());
-        if ($course->canEdit($user)) {
+        $entry = Entry::fromId($this->getEntryId());
+        if ($entry->canEdit($user)) {
             return true;
         }
 
