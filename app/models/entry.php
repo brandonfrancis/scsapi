@@ -114,7 +114,6 @@ class Entry {
      */
     private function __construct() {
         $this->row = null;
-        $this->users = null;
     }
     
     /**

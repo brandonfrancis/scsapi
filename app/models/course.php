@@ -211,7 +211,7 @@ class Course {
             
             // Add the entries with all of their questions and answers
             $entries = Entry::forCourse($this);
-            /*$entry_contexts = array();
+            $entry_contexts = array();
             foreach ($entries as $entry) {
                 $context = $entry->getContext($user);
                 if ($context == null) { // checks to see if this user has access to this entry
@@ -220,9 +220,7 @@ class Course {
                 array_push($entry_contexts, $context);
             }
             $array['entries'] = $entry_contexts;  
-             
-             */
-            $array['entries'] = $entries;
+            
         }
         
         // Return the context
