@@ -188,6 +188,8 @@ class Question {
         }
         return array(   
             'questionid' => $this->getQuestionId(),
+            'entryid' => $this->getEntryId(),
+            'courseid' => $this->getCourseId(),
             'title' => $this->getTitle(),
             'is_private' => $this->isPrivate(),
             'is_closed' => $this->isClosed(),
