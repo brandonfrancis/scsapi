@@ -111,7 +111,7 @@ class Course {
         }
         
         // Get the course from the last insert id
-        $course = Course::fromId(Database::connection()->lastInsertId());
+        $course = self::fromId(Database::connection()->lastInsertId());
         
         // Add the creator to the course as a professor
         $course->addProfessor($creator);
@@ -209,17 +209,17 @@ class Course {
         // See if this user can view the course and add the other course info
         if ($this->canView($user)) {
             
-            // Add the questions with all of their answers
-            $questions = Question::forCourse($this);
-            $question_contexts = array();
-            foreach ($questions as $question) {
-                $context = $question->getContext($user);
+            // Add the entries with all of their questions and answers
+            $entries = Entry::forCourse($this);
+            $entry_contexts = array();
+            foreach ($entries as $entry) {
+                $context = $entry->getContext($user);
                 if ($context == null) { // checks to see if this user has access to this question
                     continue;
                 }
-                array_push($question_contexts, $context);
+                array_push($entry_contexts, $context);
             }
-            $array['questions'] = $question_contexts;
+            $array['entries'] = $entry_contexts;  
             
         }
         

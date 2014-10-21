@@ -13,11 +13,11 @@ class question_controller {
     
     function create() {
         Auth::checkLoggedIn();
-        $course = Course::fromId(Input::get('courseid'));
-        if (!$course->canView(Auth::getUser())) {
-            throw new Exception('You are not allowed to ask a question in this course.');
+        $entry = Entry::fromId(Input::get('entryid'));
+        if (!$entry->canView(Auth::getUser())) {
+            throw new Exception('You are not allowed to ask a question in this entry.');
         }
-        $question = Question::create(Auth::getUser(), $course, Input::get('title'), Input::get('text'), Input::getBoolean('private'));
+        $question = Question::create(Auth::getUser(), $entry, Input::get('title'), Input::get('text'), Input::getBoolean('private'));
         View::renderJson($question->getContext(Auth::getUser()));
     }
     

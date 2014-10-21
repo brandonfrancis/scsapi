@@ -28,6 +28,7 @@ class Input {
         self::$getVariables = filter_input_array(INPUT_GET);
         self::$postVariables = filter_input_array(INPUT_POST);
         self::$runtimeVariables = array();
+        self::sanitizeInputs();
         self::$initialized = true;
     }
     
@@ -75,7 +76,7 @@ class Input {
      */
     public static function set($key, $value) {
         self::initialize();
-        self::$runtimeVariables[$key] = $value;
+        self::$runtimeVariables[$key] = self::sanitize($value);
     }
     
     /**
@@ -95,6 +96,29 @@ class Input {
             return true;
         }
         return false;
+    }
+    
+    /**
+     * Sanitizes the inputs already set.
+     */
+    private static function sanitizeInputs() {
+        foreach (self::$getVariables as $key => $val) {
+            self::$getVariables[$key] = self::sanitize($val);
+        }
+        foreach (self::$postVariables as $key => $val) {
+            self::$postVariables[$key] = self::sanitize($val);
+        }
+        foreach (self::$runtimeVariables as $key => $val) {
+            self::$runtimeVariables[$key] = self::sanitize($val);
+        }
+    }
+    
+    /**
+     * Sanatizes an input string.
+     * @param type $str The string to sanitize.
+     */
+    private static function sanitize($str) {
+        return trim($str);
     }
     
 }

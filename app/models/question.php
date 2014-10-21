@@ -50,15 +50,15 @@ class Question {
     }
     
     /**
-     * Gets a list of questions for a given course.
-     * @param Course $course The course to get the questions for.
+     * Gets a list of questions for a given entry.
+     * @param Entry $entry The entry to get the questions for.
      * @return Question[]
      */
-    public static function forCourse(Course $course) {
+    public static function forEntry(Entry $entry) {
         
         // Do the database query
-        $query = Database::connection()->prepare('SELECT * FROM question WHERE courseid = ? ORDER BY created_at DESC');
-        $query->bindValue(1, $course->getCourseId(), PDO::PARAM_INT);
+        $query = Database::connection()->prepare('SELECT * FROM question WHERE entryid = ? ORDER BY created_at DESC');
+        $query->bindValue(1, $entry->getEntryId(), PDO::PARAM_INT);
         $query->execute();
         
         // Convert the result
@@ -87,21 +87,21 @@ class Question {
     /**
      * Creates a new question.
      * @param User $creator The asker.
-     * @param Course $course The course it belongs to.
+     * @param Entry $entry The entry it belongs to.
      * @param string $title The title for the question being asked.
      * @param string $text The text of the question being asked.
      * @param boolean $private Whether or not this question is private.
      * @throws Exception
      */
-    public static function create(User $creator, Course $course, $title, $text, $private = false) {
+    public static function create(User $creator, Entry $entry, $title, $text, $private = false) {
         $private = boolval($private);
         
         // Start the transaction
         Database::connection()->beginTransaction();
         
         // Do the database insert
-        $query = Database::connection()->prepare('INSERT INTO question (courseid, is_private, created_at, title) VALUES (?, ?, ?, ?)');
-        $query->bindValue(1, $course->getCourseId(), PDO::PARAM_INT);
+        $query = Database::connection()->prepare('INSERT INTO question (entryid, is_private, created_at, title) VALUES (?, ?, ?, ?)');
+        $query->bindValue(1, $entry->getEntryId(), PDO::PARAM_INT);
         $query->bindValue(2, $private, PDO::PARAM_BOOL);
         $query->bindValue(3, time(), PDO::PARAM_INT);
         $query->bindValue(4, $title, PDO::PARAM_STR);
@@ -111,7 +111,7 @@ class Question {
         }
         
         // Get the question we just made
-        $question = Question::fromId(Database::connection()->lastInsertId());
+        $question = self::fromId(Database::connection()->lastInsertId());
         
         // Now create the first answer to the question
         $answer = null;
@@ -146,7 +146,7 @@ class Question {
         
     }
     
-     /**
+    /**
      * Deletes this question.
      */
     public function delete() {
@@ -160,7 +160,7 @@ class Question {
     /**
      * Gets called when the question changes.
      */
-    private function changed() {
+    public function changed() {
         Sync::course(Course::fromId($this->getCourseId()));
     }
     
@@ -555,11 +555,10 @@ class QuestionAnswer {
     /**
      * Gets called when this answer changes.
      */
-    private function changed() {
+    public function changed() {
         $question = Question::fromId($this->getQuestionId());
         $question->invalidateAnswerCache();
-        $course = Course::fromId($question->getCourseId());
-        Sync::course($course);
+        $question->changed();
     }
     
     /**
