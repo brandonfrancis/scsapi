@@ -189,8 +189,6 @@ class Question {
         return array(   
             'questionid' => $this->getQuestionId(),
             'title' => $this->getTitle(),
-            'part_of_assignment' => $this->belongsToAssignment(),
-            'assignmentid' => $this->getAssignmentId(),
             'is_private' => $this->isPrivate(),
             'is_closed' => $this->isClosed(),
             'answers' => $answers_contexts
