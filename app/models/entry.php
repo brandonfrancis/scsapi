@@ -145,7 +145,8 @@ class Entry {
             'display_at' => $this->getDisplayTime(),
             'title' => $this->getTitle(),
             'description' => $this->getDescription(),
-            'is_visible' => $this->isVisible()
+            'is_visible' => $this->isVisible(),
+            'important' => $this->isImportantNow()
         );
         if ($this->canView($user)) {
             
@@ -343,6 +344,26 @@ class Entry {
         $query->execute();
         $this->row['display_at'] = $time;
         $this->changed();
+    }
+    
+    /**
+     * Returns whether or not this entry is important right now.
+     * @return boolean
+     */
+    public function isImportantNow() {
+        if (!$this->isVisible()) {
+            return false;
+        }
+        if ($this->hasDueTime()) {
+            if (Utils::isTimeToday($this->getDueTime()) ||
+                    Utils::isTimeComingUp($this->getDueTime(), 14)) {
+                return true;
+            }
+        }
+        if (Utils::isTimeToday($this->getDisplayTime())) {
+            return true;
+        }
+        return false;
     }
     
 }

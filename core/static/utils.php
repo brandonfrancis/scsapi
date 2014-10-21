@@ -74,5 +74,44 @@ class Utils {
         curl_close($ch);
         return $output;
     }
+    
+    /**
+     * Gets the timestamp for the beginning of the day the time belongs to.
+     * @param int $time The time to use.
+     * @return int
+     */
+    public static function beginningOfDayTime($time) {
+        return strtotime("midnight", $time);
+    }
+    
+    /**
+     * Gets the timestamp for the end of the day the time belongs to.
+     * @param int $time The time to use.
+     * @return int
+     */
+    public static function endOfDayTime($time) {
+        return strtotime("tomorrow", self::beginningOfDayTime($time)) - 1;
+    }
 
+    /**
+     * Determines whether or not a given time is part of today.
+     * @param int $time The time to check.
+     * @return boolean
+     */
+    public static function isTimeToday($time) {
+        $beginOfDay = self::beginningOfDayTime(time());
+        $endOfDay = self::endOfDayTime(time());
+        return $time > $beginOfDay && $time < $endOfDay;
+    }
+    
+    /**
+     * Determines whether or not a time is coming up in a certain amount of days.
+     * @param type $time The time to check.
+     * @param type $days The amount of days to check within.
+     * @return boolean
+     */
+    public static function isTimeComingUp($time, $days) {
+        return $time > time() && $time <= (time() + ($days * 86400));
+    }
+    
 }
