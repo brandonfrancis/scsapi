@@ -162,6 +162,7 @@ class Entry {
             $arry['questions'] = $question_contexts;
             
         }
+        return arry;
     }
     
     /**

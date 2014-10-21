@@ -214,9 +214,9 @@ class Course {
             $entry_contexts = array();
             foreach ($entries as $entry) {
                 $context = $entry->getContext($user);
-                //if ($context == null) { // checks to see if this user has access to this entry
-                //    continue;
-               // }
+                if ($context == null) { // checks to see if this user has access to this entry
+                    continue;
+                }
                 array_push($entry_contexts, $context);
             }
             $array['entries'] = $entry_contexts;  
