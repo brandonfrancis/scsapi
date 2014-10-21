@@ -94,6 +94,9 @@ class Entry {
         // Get the course from the last insert id
         $entry = self::fromId(Database::connection()->lastInsertId());
         
+        // Sync the course
+        $entry->changed();
+        
         // Return the course
         return $entry;
         
