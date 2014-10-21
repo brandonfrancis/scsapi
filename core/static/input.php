@@ -102,7 +102,7 @@ class Input {
      * Sanitizes the inputs already set.
      */
     private static function sanitizeInputs() {
-        foreach (self::$getVariables as $key => $val) {
+       /* foreach (self::$getVariables as $key => $val) {
             self::$getVariables[$key] = self::sanitize($val);
         }
         foreach (self::$postVariables as $key => $val) {
@@ -110,7 +110,7 @@ class Input {
         }
         foreach (self::$runtimeVariables as $key => $val) {
             self::$runtimeVariables[$key] = self::sanitize($val);
-        }
+        } */
     }
     
     /**
