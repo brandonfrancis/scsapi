@@ -135,7 +135,7 @@ class Entry {
      */
     public function getContext(User $user) {
         if (!$this->canView($user)) {
-            return null;
+            //return null;
         }
         $arry = array(
             'entryid' => $this->getEntryId(),
