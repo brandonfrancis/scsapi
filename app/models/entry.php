@@ -47,7 +47,7 @@ class Entry {
     public static function fromRow($row) {
         $entry = new Entry();
         $entry->row = $row;
-        ObjCache::set(OBJCACHE_TYPE_COURSE, $entry->getEntryId(), $entry);
+        ObjCache::set(OBJCACHE_TYPE_ENTRY, $entry->getEntryId(), $entry);
         return $entry;
     }
     
@@ -135,7 +135,7 @@ class Entry {
      */
     public function getContext(User $user) {
         if (!$this->canView($user)) {
-            //return null;
+            return null;
         }
         $arry = array(
             'entryid' => $this->getEntryId(),
