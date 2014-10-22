@@ -136,7 +136,7 @@ class View {
                 array(
                     '_token' => Session::getToken(),
                     'app' => array('alerts' => Log::getAlerts(), 'notices' => Log::getNotices()),
-                    'user' => Auth::getUser()->getContext()
+                    'user' => Auth::getUser()->getContext(Auth::getUser())
                 ), array('page' => $context));
         return self::$twig->render($name . '.html.twig', $context);
     }
