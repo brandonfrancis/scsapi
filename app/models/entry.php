@@ -152,7 +152,7 @@ class Entry {
             
             // Add the questions with all of their answers
             $question_contexts = array_filter(array_map(function($question, $contextUser) {
-                return $question->getContext($contextUser[0]);
+                return $question->getContext($contextUser);
             }, Question::forEntry($this), array($user)));
             $arry['questions'] = $question_contexts;
             
