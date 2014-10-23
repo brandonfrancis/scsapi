@@ -193,6 +193,8 @@ class Question {
             'title' => $this->getTitle(),
             'is_private' => $this->isPrivate(),
             'is_closed' => $this->isClosed(),
+            'can_answer' => $this->canAnswer($user),
+            'can_edit' => $this->canEdit($user),
             'answers' => $answers_contexts
         );
     }
@@ -563,7 +565,8 @@ class QuestionAnswer {
             'edited' => $this->isEdited(),
             'edited_at' => $this->getEditedTime(),
             'edited_by' => User::fromId($this->getEditorUserid())->getContext($user),
-            'text' => $this->getText()
+            'text' => $this->getText(),
+            'can_edit' => $this->canEdit($user)
         );
     }
     
