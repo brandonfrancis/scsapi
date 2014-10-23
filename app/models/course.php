@@ -210,15 +210,9 @@ class Course {
         if ($this->canView($user)) {
             
             // Add the entries with all of their questions and answers
-            $entries = Entry::forCourse($this);
-            $entry_contexts = array();
-            foreach ($entries as $entry) {
-                $context = $entry->getContext($user);
-                if ($context == null) { // checks to see if this user has access to this entry
-                    continue;
-                }
-                array_push($entry_contexts, $context);
-            }
+            $entry_contexts = array_filter(array_map(function($question, $contextUser) {
+                return $question->getContext($contextUser[0]);
+            }, Entries::forCourse($this), array($user)));
             $array['entries'] = $entry_contexts;  
             
         }

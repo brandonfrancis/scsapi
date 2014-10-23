@@ -151,15 +151,9 @@ class Entry {
         if ($this->canView($user)) {
             
             // Add the questions with all of their answers
-            $questions = Question::forEntry($this);
-            $question_contexts = array();
-            foreach ($questions as $question) {
-                $context = $question->getContext($user);
-                if ($context == null) { // checks to see if this user has access to this question
-                    continue;
-                }
-                array_push($question_contexts, $context);
-            }
+            $question_contexts = array_filter(array_map(function($question, $contextUser) {
+                return $question->getContext($contextUser[0]);
+            }, Question::forEntry($this), array($user)));
             $arry['questions'] = $question_contexts;
             
         }
