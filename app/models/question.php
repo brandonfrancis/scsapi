@@ -575,6 +575,7 @@ class QuestionAnswer {
             'edited_by' => User::fromId($this->getEditorUserid())->getContext($user),
             'text' => $this->getText(),
             'can_edit' => $this->canEdit($user),
+            'has_liked' => $this->hasLiked($user),
             'likes' => $likes_contexts
         );
     }
