@@ -592,7 +592,7 @@ class QuestionAnswer {
         
         // Do the query
         $query = Database::connection()->prepare('SELECT user.* from user, answer_likes WHERE answer_likes.answerid = ? AND'
-                . ' answer_likes.userid = user.userid ORDER BY user_likes.created_at DESC');
+                . ' answer_likes.userid = user.userid ORDER BY answer_likes.created_at DESC');
         $query->bindValue(1, $this->getAnswerId(), PDO::PARAM_INT);
         $query->execute();
         
