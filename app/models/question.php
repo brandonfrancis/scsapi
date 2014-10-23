@@ -615,7 +615,7 @@ class QuestionAnswer {
      * @param User $user The user to check for.
      * @return boolean
      */
-    public static function hasLiked(User $user) {
+    public function hasLiked(User $user) {
         $users = $this->getLikes();
         foreach ($users as $curUser) {
             if ($curUser->getUserId() == $user->getUserId()) {
