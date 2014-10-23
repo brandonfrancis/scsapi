@@ -182,9 +182,10 @@ class Question {
         if (!$this->canView($user)) {
             return null;
         }
+        $answers = $this->getAnswers();
         $answers_contexts = array_map(function($user, $contextUser) {
             return $user->getContext($contextUser);
-        }, $this->getAnswers(), array($user));
+        }, $answers, array_fill(0, count($answers), $user));
         return array(   
             'questionid' => $this->getQuestionId(),
             'entryid' => $this->getEntryId(),
@@ -558,9 +559,10 @@ class QuestionAnswer {
     public function getContext(User $user) {
         
         // Build the likes array
-        $likes = array_map(function($curUser, $contextUser) { 
-            return $curUser->getContext($contextUser); 
-        }, $this->getLikes(), array($user));
+        $likesUsers = $this->getLikes();
+        $likes_contexts = array_map(function($user, $contextUser) { 
+            return $user->getContext($contextUser); 
+        }, $likesUsers, array_fill(0, count($likesUsers), $user));
         
         // Return the context
         return array(
@@ -573,7 +575,7 @@ class QuestionAnswer {
             'edited_by' => User::fromId($this->getEditorUserid())->getContext($user),
             'text' => $this->getText(),
             'can_edit' => $this->canEdit($user),
-            'likes' => $likes
+            'likes' => $likes_contexts
         );
     }
     

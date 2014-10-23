@@ -151,9 +151,10 @@ class Entry {
         if ($this->canView($user)) {
             
             // Add the questions with all of their answers
+            $questions = Question::forEntry($this);
             $question_contexts = array_filter(array_map(function($question, $contextUser) {
                 return $question->getContext($contextUser);
-            }, Question::forEntry($this), array($user)));
+            }, $questions, array_fill(0, count($questions), $user)));
             $arry['questions'] = $question_contexts;
             
         }
