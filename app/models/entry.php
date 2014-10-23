@@ -154,7 +154,7 @@ class Entry {
             $questions = Question::forEntry($this);
             $question_contexts = array_filter(array_map(function($question, $contextUser) {
                 return $question->getContext($contextUser);
-            }, $questions, array_fill(0, count($questions), $user)));
+            }, $questions, count($questions) > 0 ? array_fill(0, count($questions), $user) : array()));
             $arry['questions'] = $question_contexts;
             
         }

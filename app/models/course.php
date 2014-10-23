@@ -213,7 +213,7 @@ class Course {
             $entries = Entry::forCourse($this);
             $entry_contexts = array_filter(array_map(function($question, $contextUser) {
                 return $question->getContext($contextUser);
-            }, $entries, array_fill(0, count($entries), $user)));
+            }, $entries, count($entries) > 0 ? array_fill(0, count($entries), $user) : array()));
             $array['entries'] = $entry_contexts;  
             
         }

@@ -185,7 +185,7 @@ class Question {
         $answers = $this->getAnswers();
         $answers_contexts = array_map(function($user, $contextUser) {
             return $user->getContext($contextUser);
-        }, $answers, array_fill(0, count($answers), $user));
+        }, $answers, count($answers) > 0 ? array_fill(0, count($answers), $user) : array());
         return array(   
             'questionid' => $this->getQuestionId(),
             'entryid' => $this->getEntryId(),
@@ -562,7 +562,7 @@ class QuestionAnswer {
         $likesUsers = $this->getLikes();
         $likes_contexts = array_map(function($user, $contextUser) { 
             return $user->getContext($contextUser); 
-        }, $likesUsers, array_fill(0, count($likesUsers), $user));
+        }, $likesUsers, count($likesUsers) > 0 ? array_fill(0, count($likesUsers), $user) : array());
         
         // Return the context
         return array(
