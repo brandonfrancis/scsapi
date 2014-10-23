@@ -8,6 +8,7 @@ Routes::set('answer/get', 'question#get_answer');
 Routes::set('answer/create', 'question#create_answer');
 Routes::set('answer/delete', 'question#delete_answer');
 Routes::set('answer/edit', 'question#edit_answer');
+Routes::set('answer/toggle_like', 'question#toggle_like');
 
 /**
  * Represnets a question that can be asked.
@@ -181,11 +182,9 @@ class Question {
         if (!$this->canView($user)) {
             return null;
         }
-        $answers = $this->getAnswers();
-        $answers_contexts = array();
-        foreach ($answers as $answer) {
-            array_push($answers_contexts, $answer->getContext($user));
-        }
+        $answers_contexts = array_map(function($user, $contextUser) {
+            return $user->getContext($contextUser[0]);
+        }, $this->getAnswers(), array($user));
         return array(   
             'questionid' => $this->getQuestionId(),
             'entryid' => $this->getEntryId(),
@@ -557,6 +556,13 @@ class QuestionAnswer {
      * @return array
      */
     public function getContext(User $user) {
+        
+        // Build the likes array
+        $likes = array_map(function($curUser, $contextUser) { 
+            return $curUser->getContext($contextUser[0]); 
+        }, $this->getLikes(), array($user));
+        
+        // Return the context
         return array(
             'answerid' => $this->getAnswerId(),
             'questionid' => $this->getQuestionId(),
@@ -566,10 +572,90 @@ class QuestionAnswer {
             'edited_at' => $this->getEditedTime(),
             'edited_by' => User::fromId($this->getEditorUserid())->getContext($user),
             'text' => $this->getText(),
-            'can_edit' => $this->canEdit($user)
+            'can_edit' => $this->canEdit($user),
+            'likes' => $likes
         );
     }
     
+    /**
+     * Gets an array of users who like this answer.
+     * @return User[]
+     */
+    private function getLikes() {
+        
+        // See if we can return the cached result
+        if ($this->likesCache != null) {
+            return $this->likesCache;
+        }
+        
+        // Do the query
+        $query = Database::connection()->prepare('SELECT user.* from user, answer_likes WHERE answer_likes.answerid = ? AND'
+                . ' answer_likes.userid = user.userid ORDER BY user_likes.created_at DESC');
+        $query->bindValue(1, $this->getAnswerId(), PDO::PARAM_INT);
+        $query->execute();
+        
+        // Create the array of users
+        $results = $query->fetchAll();
+        $users = array();
+        foreach ($results as $row) {
+            array_push($users, User::fromRow($row));
+        }
+        
+        // Set the cache and return
+        $this->likesCache = $users;
+        return $users;
+    }
+    private $likesCache = null;
+    
+    /**
+     * Determines whether or not a user has liked this answer.
+     * @param User $user The user to check for.
+     * @return boolean
+     */
+    public static function hasLiked(User $user) {
+        $users = $this->getLikes();
+        foreach ($users as $curUser) {
+            if ($curUser->getUserId() == $user->getUserId()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Makes a user like or unlike this answer.
+     * @param User $user The user to use.
+     */
+    public function toggleLike(User $user) {
+        
+        // See if this user has liked it already.
+        if ($this->hasLiked($user)) {
+            
+            // Remove the like from the database
+            $query = Database::connection()->prepare('DELETE FROM answer_likes WHERE answerid = ? AND userid = ?');
+            $query->bindValue(1, $this->getAnswerId(), PDO::PARAM_INT);
+            $query->bindValue(2, $user->getUserId(), PDO::PARAM_INT);
+            $query->execute();
+            
+            // Invalidate the cache
+            $this->likesCache = null;
+            $this->changed();
+            return;
+        }
+        
+        // Add the like to the database
+        $query = Database::connection()->prepare('INSERT INTO answer_likes (answerid, userid, created_at) VALUES (?, ?, ?)');
+        $query->bindValue(1, $this->getAnswerId(), PDO::PARAM_INT);
+        $query->bindValue(2, $user->getUserId(), PDO::PARAM_INT);
+        $query->bindValue(3, time(), PDO::PARAM_INT);
+        $query->execute();
+        
+        // Invalidate the cache
+        $this->likesCache = null;
+        $this->changed();
+        
+    }
+
     /**
      * Edits the text of this answer.
      * @param User $editor The user who is doing the editing.

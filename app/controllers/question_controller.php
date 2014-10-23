@@ -80,5 +80,15 @@ class question_controller {
         View::renderJson($answer->getContext(Auth::getUser()));
     }
     
+    function toggle_like() {
+        Auth::checkLoggedIn();
+        $answer = QuestionAnswer::fromId(Input::get('answerid'));
+        if (!$answer->canView(Auth::getUser())) {
+            throw new Exception('You are not allowed to like this answer.');
+        }
+        $answer->toggleLike(Auth::getUser());
+        View::renderJson($answer->getContext(Auth::getUser()));
+    }
+    
 }
 
