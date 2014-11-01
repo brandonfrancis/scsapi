@@ -185,7 +185,7 @@ class View {
      * @param string $name The optional name for the download to download as in the user's browser.
      * @throws Exception
      */
-    public static function renderFile($filename, $name) {
+    public static function renderFile($filename, $name = '') {
         
         // Make sure the file exists
         if (!file_exists($filename)) {
