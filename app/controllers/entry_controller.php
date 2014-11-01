@@ -72,7 +72,7 @@ class entry_controller {
         if ($attachment->getAttachmentType() == Attachment::ATTACHMENT_TYPE_IMAGE) {
             View::renderImage(Attachment::getStoragePath($attachment->getAttachmentId()));
         } else {
-            View::renderFile(Attachment::getStoragePath($attachment->getAttachmentId()));
+            View::renderFile(Attachment::getStoragePath($attachment->getAttachmentId(), $attachment->getName()));
         }
         
     }
