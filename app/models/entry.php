@@ -5,6 +5,7 @@ Routes::set('entry/create', 'entry#create');
 Routes::set('entry/delete', 'entry#delete');
 Routes::set('entry/edit', 'entry#edit');
 Routes::set('entry/upload_attachment', 'entry#upload_attachment');
+Routes::set('entry/delete_attachment', 'entry#delete_attachment');
 Routes::set('entry/attachment/{entryid}/{attachmentid}', 'entry#get_attachment', false);
 
 /**
@@ -113,7 +114,7 @@ class Entry {
     /**
      * Gets called when this entry changes.
      */
-    private function changed() {
+    public function changed() {
         Sync::course(Course::fromId($this->getCourseId()));
     }
     

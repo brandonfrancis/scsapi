@@ -77,6 +77,36 @@ class entry_controller {
         
     }
     
+    function delete_attachment() {
+        Auth::checkLoggedIn();
+        $entry = Entry::fromId(Input::get('entryid'));
+        $attachment = Attachment::fromId(Input::get('attachmentid'));
+        
+        // Make sure this user can edit the entry
+        if (!$entry->canEdit(Auth::getUser())) {
+            throw new Exception('You cannot edit this entry.');
+        }
+        
+        // Make sure the attachment belongs to the entry
+        $attachments = $entry->getAttachments();
+        $found = false;
+        foreach ($attachments as $curAttachment) {
+            if ($curAttachment->getAttachmentId() == $attachment->getAttachmentId()) {
+                $found = true;
+                break;
+            }
+        }
+        if (!$found) {
+            throw new Exception('The requested attachment does not belong to the entry given.');
+        }
+        
+        // Now delete the attachment
+        $attachment->delete();
+        
+        // We have to manually sync since the attachment isn't part of the entry technically
+        $entry->changed();
+    }
+    
     function upload_attachment() {
         Auth::checkLoggedIn();
         $entry = Entry::fromId(Input::get('entryid'));
