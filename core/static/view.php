@@ -205,7 +205,7 @@ class View {
         header("Cache-Control: public");
         header("Content-Description: File Transfer");
         header("Content-Type: " . $mimetype);
-        header("Content-Disposition: attachment; filename=\"" . $name . "\"");
+        header("Content-Disposition: inline; filename=\"" . $name . "\"");
         header("Content-Transfer-Encoding: binary");
         header("Content-Length: " . $size);
 
