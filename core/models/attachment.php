@@ -59,7 +59,7 @@ class Attachment {
                 $error = $_FILES['uploaded_attachments']['error'][$i];
                 if ($error == UPLOAD_ERR_OK) {
                     $tmp_name = $_FILES['uploaded_attachments']['tmp_name'][$i];
-                    $name = $_FILES['uploaded_images']['name'];
+                    $name = $_FILES['uploaded_attachments']['name'];
                     $attachments[] = self::create(Auth::getUser(), $tmp_name, $name);
                 }
             }
@@ -69,8 +69,8 @@ class Attachment {
             // Handle only a single upload
             $error = $_FILES['uploaded_attachments']['error'];
             if ($error == UPLOAD_ERR_OK) {
-                $tmp_name = $_FILES['uploaded_images']['tmp_name'];
-                $name = $_FILES['uploaded_images']['name'];
+                $tmp_name = $_FILES['uploaded_attachments']['tmp_name'];
+                $name = $_FILES['uploaded_attachments']['name'];
                 $attachments[] = self::create(Auth::getUser(), $tmp_name, $name);
             }
             
@@ -169,6 +169,9 @@ class Attachment {
      * @return int
      */
     public function getAttachmentType() {
+        if ($this->getName()) {
+            
+        }
         return self::ATTACHMENT_TYPE_BINARY;
     }
     
