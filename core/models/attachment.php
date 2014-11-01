@@ -203,7 +203,7 @@ class Attachment {
         }
         
         // Delete the image from the disk
-        $filename = self::getStoragePath($this->getId());
+        $filename = self::getStoragePath($this->getAttachmentId());
         if (file_exists($filename)) {
             unlink($filename);
         }
