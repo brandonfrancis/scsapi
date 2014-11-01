@@ -5,7 +5,7 @@ Routes::set('entry/create', 'entry#create');
 Routes::set('entry/delete', 'entry#delete');
 Routes::set('entry/edit', 'entry#edit');
 Routes::set('entry/upload_attachment', 'entry#upload_attachment');
-Routes::set('entry/attachment/{entryid}/{attachmentid}', 'entry#get_attachment');
+Routes::set('entry/attachment/{entryid}/{attachmentid}', 'entry#get_attachment', false);
 
 /**
  * Represents a course entry.
