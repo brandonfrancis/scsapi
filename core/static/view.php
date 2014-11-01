@@ -194,7 +194,7 @@ class View {
 
         // Get the correct mime type
         $finfo = finfo_open(FILEINFO_MIME_TYPE); // return mime type ala mimetype extension
-        $mimetype = finfo_file($finfo, $filename) . "\n";
+        $mimetype = finfo_file($finfo, $filename);
         finfo_close($finfo);
 
         // Set up the headers
