@@ -169,10 +169,10 @@ class Attachment {
      * @return int
      */
     public function getAttachmentType() {
-        if ($this->getName()) {
-            
+        if (getimagesize(self::getStoragePath($this->getAttachmentId())) === FALSE) {
+            return self::ATTACHMENT_TYPE_BINARY;
         }
-        return self::ATTACHMENT_TYPE_BINARY;
+        return self::ATTACHMENT_TYPE_IMAGE;
     }
     
     /**
