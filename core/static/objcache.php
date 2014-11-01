@@ -5,6 +5,7 @@
  */
 define('OBJCACHE_TYPE_USER', 'user');
 define('OBJCACHE_TYPE_NOTIFICATION', 'notification');
+define('OBJCACHE_TYPE_ATTACHMENT', 'attachment');
 
 /**
  * Used to cache objects to avoid repeated database queries.

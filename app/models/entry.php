@@ -4,6 +4,8 @@ Routes::set('entry/get', 'entry#get');
 Routes::set('entry/create', 'entry#create');
 Routes::set('entry/delete', 'entry#delete');
 Routes::set('entry/edit', 'entry#edit');
+Routes::set('entry/upload_attachment', 'entry#upload_attachment');
+Routes::set('entry/attachment/{entryid}/{attachmentid}', 'entry#get_attachment');
 
 /**
  * Represents a course entry.
@@ -14,6 +16,12 @@ class Entry {
      * The local database row.
      */
     private $row;
+    
+    /**
+     * Local attachment storage.
+     * @var Attachment[] 
+     */
+    private $attachments;
     
     /**
      * Gets a entry given its unique id.
@@ -148,19 +156,24 @@ class Entry {
             'is_visible' => $this->isVisible(),
             'important' => $this->isImportantNow()
         );
-        if ($this->canView($user)) {
-            
-            // Add the questions with all of their answers
-            $questions = Question::forEntry($this);
-            $question_contexts = array_filter(array_map(function($question, $contextUser) {
-                return $question->getContext($contextUser);
-            }, $questions, count($questions) > 0 ? array_fill(0, count($questions), $user) : array()));
-            $arry['questions'] = $question_contexts;
-            
-        }
+
+        // Add the questions with all of their answers
+        $questions = Question::forEntry($this);
+        $question_contexts = array_filter(array_map(function($question, $contextUser) {
+                    return $question->getContext($contextUser);
+                }, $questions, count($questions) > 0 ? array_fill(0, count($questions), $user) : array()));
+        $arry['questions'] = $question_contexts;
+
+        // Add the attachments in
+        $attachments = $this->getAttachments();
+        $attachment_contexts = array_map(function($attachment) {
+            return $attachment->getContext();
+        }, $attachments);
+        $arry['attachments'] = $attachment_contexts;
+
         return $arry;
     }
-    
+
     /**
      * Gets the id for this entry.
      * @return int
@@ -359,6 +372,48 @@ class Entry {
             return true;
         }
         return false;
+    }
+    
+    /**
+     * Gets the attachments for this entry.
+     * @return Attachment[]
+     */
+    public function getAttachments() {
+        
+        // See if we can just return the list we have cached
+        if ($this->attachments != null) {
+            return $this->attachments;
+        }
+        
+        // Do the database query
+        $query = Database::connection()->prepare('SELECT attachment.* FROM entry_attachment, attachment WHERE entryid = ? AND '
+                . 'entry_attachment.attachmentid = attachment.attachmentid ORDER BY name');
+        $query->bindValue(1, $this->getEntryId(), PDO::PARAM_INT);
+        if (!$query->execute()) {
+            return array();
+        }
+        
+        // Get the results
+        $results = $query->fetchAll();
+        $attachments = array();
+        foreach ($results as $row) {
+            array_push($attachments, Attachment::fromRow($row));
+        }
+        $this->attachments = $attachments;
+        return $attachments;
+        
+    }
+    
+    /**
+     * Adds an attachment to this entry.
+     * @param Attachment $attachment The attachment to add.
+     */
+    public function addAttachment(Attachment $attachment) {
+        $query = Database::connection()->prepare('INSERT INTO entry_attachment (entryid, attachmentid) VALUES (?, ?)');
+        $query->bindValue(1, $this->getEntryId(), PDO::PARAM_INT);
+        $query->bindValue(2, $attachment->getAttachmentId(), PDO::PARAM_INT);
+        $query->execute();
+        $this->attachments = null;
     }
     
 }
