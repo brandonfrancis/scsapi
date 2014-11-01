@@ -414,6 +414,7 @@ class Entry {
         $query->bindValue(2, $attachment->getAttachmentId(), PDO::PARAM_INT);
         $query->execute();
         $this->attachments = null;
+        $this->changed();
     }
     
 }
