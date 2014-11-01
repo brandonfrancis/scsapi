@@ -192,6 +192,11 @@ class View {
             throw new Exception('File does not exist.');
         }
 
+        // Get the correct mime type
+        $finfo = finfo_open(FILEINFO_MIME_TYPE); // return mime type ala mimetype extension
+        $mimetype = finfo_file($finfo, $filename) . "\n";
+        finfo_close($finfo);
+
         // Set up the headers
         $size = filesize($filename);
         header("Pragma: public");
@@ -199,7 +204,7 @@ class View {
         header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
         header("Cache-Control: public");
         header("Content-Description: File Transfer");
-        header("Content-Type: File");
+        header("Content-Type: " . $mimetype);
         header("Content-Disposition: attachment; filename=\"" . $name . "\"");
         header("Content-Transfer-Encoding: binary");
         header("Content-Length: " . $size);
