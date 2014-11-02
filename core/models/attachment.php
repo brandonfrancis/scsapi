@@ -165,6 +165,14 @@ class Attachment {
     }
     
     /**
+     * Gets the size of this attachment.
+     * @return int
+     */
+    public function getSize() {
+        return intval($this->row['size']);
+    }
+    
+    /**
      * Gets the type of file this 
      * @return int
      */
@@ -185,6 +193,7 @@ class Attachment {
             'attachmentid' => $this->getAttachmentId(),
             'created_by' => $this->getOwnerUserId(),
             'created_at' => $this->getCreationTime(),
+            'size' => $this->getSize(),
             'name' => $this->getName()
         );
     }
