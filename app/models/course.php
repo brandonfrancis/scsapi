@@ -6,7 +6,7 @@ Routes::set('course/edit', 'course#edit');
 Routes::set('course/add_students', 'course#add_students');
 Routes::set('course/add_professor', 'course#add_professor');
 Routes::set('course/remove_student', 'course#remove_student');
-Rouses::set('course/create', 'course#create');
+Routes::set('course/create', 'course#create');
 
 /**
  * Represents a school course.
