@@ -4,6 +4,9 @@ Routes::set('course/get_list', 'course#get_list');
 Routes::set('course/get', 'course#get');
 Routes::set('course/edit', 'course#edit');
 Routes::set('course/add_students', 'course#add_students');
+Routes::set('course/add_professor', 'course#add_professor');
+Rouses::set('course/remove_student', 'course#remove_student');
+Rouses::set('course/create', 'course#create');
 
 /**
  * Represents a school course.
@@ -71,9 +74,10 @@ class Course {
     public static function forUser(User $user) {
         
         // Do the query
-        $query = Database::connection()->prepare('SELECT course.*, course_user.* FROM course, course_user'
-                . ' WHERE course.courseid = course_user.courseid AND course_user.userid = ? ORDER BY course.title');
+        $query = Database::connection()->prepare('SELECT course.* FROM course, course_user'
+                . ' WHERE (course.courseid = course_user.courseid AND course_user.userid = ?) OR (course.created_by = ?) ORDER BY course.title');
         $query->bindValue(1, $user->getUserId(), PDO::PARAM_INT);
+        $query->bindValue(2, $user->getUserId(), PDO::PARAM_INT);
         if (!$query->execute() || $query->rowCount() == 0) {
             return array();
         }
@@ -113,9 +117,9 @@ class Course {
         // Get the course from the last insert id
         $course = self::fromId(Database::connection()->lastInsertId());
         
-        // Add the creator to the course as a professor
+        // Add the creator as a professor
         $course->addProfessor($creator);
-        
+                
         // Return the course
         return $course;
         
@@ -137,6 +141,12 @@ class Course {
         foreach ($this->professors as $user) {
             Sync::emit($user, 'course', $this->getCourseId(), $this->getContext($user));
         }
+        
+        // Sync to all admins
+        foreach (User::admins() as $user) {
+            Sync::emit($user, 'course', $this->getCourseId(), $this->getContext($user));
+        }
+        
         
     }
     
@@ -310,11 +320,6 @@ class Course {
      * @throws Exception
      */
     public function removeUser(User $user) {
-        
-        // Make sure this is not the class creator, they cannot be removed as a security precaution
-        if ($user->getUserId() == $this->getCreatorUserId()) {
-            throw new Exception('The creator of the course cannot be removed.');
-        }
                 
         // Make sure they're part of the class already
         if (!$this->canView($user)) {

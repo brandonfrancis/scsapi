@@ -73,6 +73,26 @@ class User {
     }
     
     /**
+     * Gets the list of all admins.
+     * @return User[]
+     */
+    public static function admins() {
+        if (self::$admins_cache != null) {
+            return self::$admins_cache;
+        }
+        $query = Database::connection()->prepare('SLECT * FROM user WHERE is_admin = 1');
+        $query->execute();
+        $result = $query->fetch();
+        $admins = array();
+        foreach ($result as $row) {
+            array_push($admins, User::fromRow($row));
+        }
+        self::$admins_cache = $admins;
+        return $admins;
+    }
+    private static $admins_cache = null;
+    
+    /**
      * Gets a new guest user.
      * @return User
      */
