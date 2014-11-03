@@ -5,7 +5,7 @@ Routes::set('course/get', 'course#get');
 Routes::set('course/edit', 'course#edit');
 Routes::set('course/add_students', 'course#add_students');
 Routes::set('course/add_professor', 'course#add_professor');
-Rouses::set('course/remove_student', 'course#remove_student');
+Routes::set('course/remove_student', 'course#remove_student');
 Rouses::set('course/create', 'course#create');
 
 /**
