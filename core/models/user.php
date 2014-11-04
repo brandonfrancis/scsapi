@@ -80,7 +80,7 @@ class User {
         if (self::$admins_cache != null) {
             return self::$admins_cache;
         }
-        $query = Database::connection()->prepare('SLECT * FROM user WHERE is_admin = 1');
+        $query = Database::connection()->prepare('SELECT * FROM user WHERE is_admin = 1');
         $query->execute();
         $result = $query->fetch();
         $admins = array();
