@@ -38,7 +38,27 @@ class question_controller {
             throw new Exception('You are not allowed to edit this question.');
         }
         $question->setTitle(Input::get('title'));
-        view::renderJson($question->getContext(Auth::getUser()));
+        View::renderJson($question->getContext(Auth::getUser()));
+    }
+    
+    function toggle_closed() {
+        Auth::checkLoggedIn();
+        $question = Question::fromId(Input::get('questionid'));
+        if (!$question->canEdit(Auth::getUser())) {
+            throw new Exception('You are not allowed to close or open this question.');
+        }
+        $question->setClosed(!$question->isClosed());
+        View::renderJson($question->getContext(Auth::getUser()));
+    }
+    
+    function toggle_private() {
+        Auth::checkLoggedIn();
+        $question = Question::fromId(Input::get('questionid'));
+        if (!$question->canEdit(Auth::getUser())) {
+            throw new Exception('You are not allowed to change the visibility this question.');
+        }
+        $question->setPrivate(!$question->isPrivate());
+        View::renderJson($question->getContext(Auth::getUser()));
     }
     
     function get_answer() {

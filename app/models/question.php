@@ -4,6 +4,8 @@ Routes::set('question/get', 'question#get');
 Routes::set('question/create', 'question#create');
 Routes::set('question/delete', 'question#delete');
 Routes::set('question/edit', 'question#edit');
+Routes::set('question/toggle_closed', 'question#toggle_closed');
+Routes::set('question/toggle_private', 'question#toggle_private');
 Routes::set('answer/get', 'question#get_answer');
 Routes::set('answer/create', 'question#create_answer');
 Routes::set('answer/delete', 'question#delete_answer');
@@ -564,6 +566,16 @@ class QuestionAnswer {
             return $user->getContext($contextUser); 
         }, $likesUsers, count($likesUsers) > 0 ? array_fill(0, count($likesUsers), $user) : array());
         
+        // See if the professor has liked this answer
+        $professorLiked = false;
+        $course = Course::fromId(Question::fromId($this->getQuestionId())->getCourseId());
+        foreach ($likesUsers as $user) {
+            if ($course->canEdit($user)) {
+                $professorLiked = true;
+                break;
+            }
+        }
+        
         // Return the context
         return array(
             'answerid' => $this->getAnswerId(),
@@ -576,7 +588,8 @@ class QuestionAnswer {
             'text' => $this->getText(),
             'can_edit' => $this->canEdit($user),
             'has_liked' => $this->hasLiked($user),
-            'likes' => $likes_contexts
+            'likes' => $likes_contexts,
+            'professor_liked' => $professorLiked
         );
     }
     

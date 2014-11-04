@@ -33,7 +33,7 @@ define('APP_NAME', 'Social Coursesite');
  * The default email address to send mail as.
  * Needs to be a valid email address.
  */
-define('APP_EMAIL', 'noreply@localhost');
+define('APP_EMAIL', 'noreply@scs.game-tuts.com');
 
 /**
  * The full url of the website. This is mainly used
