@@ -705,10 +705,28 @@ class QuestionAnswer {
      * Deletes this answer.
      */
     public function delete() {
-        $query = Database::connection()->prepare('DELETE FROM question_answer WHERE answerid = ?');
-        $query->bindValue(1, $this->getAnswerId(), PDO::PARAM_INT);
-        $query->execute();
-        $this->changed();
+        
+        // Let's see if this is the first answer
+        // if it is, we should delete the question manually
+        // even though the database will take care of it anyway
+        // because we want to ensure "changed" fires correctly to the users
+        $question = Question::fromId($this->getQuestionId());
+        if ($question->getFirstAnswerId() == $this->getAnswerId()) {
+            
+            // Delete the question and this answer will go away with it
+            $question->delete();
+            
+        } else {
+            
+            // We can just delete this answer and the question wil still exist
+            $query = Database::connection()->prepare('DELETE FROM question_answer WHERE answerid = ?');
+            $query->bindValue(1, $this->getAnswerId(), PDO::PARAM_INT);
+            $query->execute();
+            $this->changed();
+            
+        }
+        
+        // Make sure to invalidate this answer
         ObjCache::invalidate(OBJCACHE_TYPE_ANSWER, $this->getAnswerId());
     }
     
