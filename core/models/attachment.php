@@ -125,7 +125,7 @@ class Attachment {
     /**
      * Turns this attackment into a thubmnail if it is an image.
      */
-    public static function convertIntoThubmnail() {
+    public function convertIntoThubmnail() {
         
         if ($this->getAttachmentType() != self::ATTACHMENT_TYPE_IMAGE) {
             return;
