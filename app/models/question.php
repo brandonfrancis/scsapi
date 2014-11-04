@@ -575,6 +575,7 @@ class QuestionAnswer {
                 break;
             }
         }
+        $isProfessor = $course->canEdit(User::fromId($this->getUserId()));
         
         // Return the context
         return array(
@@ -589,7 +590,8 @@ class QuestionAnswer {
             'can_edit' => $this->canEdit($user),
             'has_liked' => $this->hasLiked($user),
             'likes' => $likes_contexts,
-            'professor_liked' => $professorLiked
+            'professor_liked' => $professorLiked,
+            'is_professor' => $isProfessor
         );
     }
     
