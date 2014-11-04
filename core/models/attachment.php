@@ -39,10 +39,11 @@ class Attachment {
     
     /**
      * Handles uploads to the system.
+     * @param int $max The maximum amount of uploads to handle.
      * @return Attachment[]
      * @throws Exceptions
      */
-    public static function handleUpload() {
+    public static function handleUpload($max = -1) {
 
         // Make sure the user isn't a guest
         if (Auth::getUser()->isGuest()) {
@@ -56,6 +57,9 @@ class Attachment {
             
             // If we're handling multiple images in one post
             for ($i = 0; $i < count($_FILES['uploaded_attachments']['tmp_name']); $i++) {
+                if ($max > -1 && i >= $max) {
+                    break;
+                }
                 $error = $_FILES['uploaded_attachments']['error'][$i];
                 if ($error == UPLOAD_ERR_OK) {
                     $tmp_name = $_FILES['uploaded_attachments']['tmp_name'][$i];
@@ -117,8 +121,24 @@ class Attachment {
         return $attachment;
         
     }
-    
-     /**
+
+    /**
+     * Turns this attackment into a thubmnail if it is an image.
+     */
+    public static function convertIntoThubmnail() {
+        
+        if ($this->getAttachmentType() != self::ATTACHMENT_TYPE_IMAGE) {
+            return;
+        }
+        $imagick = new Imagick();
+        $imagick->readimage(self::getStoragePath($this->getAttachmentId()));
+        $imagick->setimagetype('png');
+        $imagick->cropthumbnailimage(90, 90);
+        $imagick->writeimage();
+        
+    }
+
+    /**
      * Returns the path for a specific attachment id.
      * @param int $attachmentid
      */

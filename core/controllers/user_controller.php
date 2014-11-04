@@ -110,5 +110,45 @@ class user_controller {
         exit;
         
     }
+    
+    function get_avatar() {
+        
+        // Get the user
+        $user = User::fromId(Input::get('userid'));
+        
+        // Make sure the user has an avatar
+        if (empty($user->getAvatarAttachmentId())) {
+            throw new Exception('This user does not have an avatar.');
+        }
+        
+        // Render the attachment
+        View::renderImage(Attachment::getStoragePath($user->getAvatarAttachmentId()));
+        
+    }
+    
+    function set_avatar() {
+        Auth::checkLoggedIn();
+        
+        // Get the attachment from the upload
+        $attachments = Attachment::handleUpload(1);
+        if (count($attachments) < 1) {
+            throw new Exception('No avatar uploaded.');
+        }
+        
+        // Get the only attachment
+        $attachment = $attachments[0];
+        
+        // Make sure it is an image
+        if ($attachment->getAttachmentType() != Attachment::ATTACHMENT_TYPE_IMAGE) {
+            $attachment->delete();
+            throw new Exception('Avatar given was not an image.');
+        }
+        
+        // Set the user's avatar
+        Auth::getUser()->setAvatar($attachment);
+        Auth::getUser()->emit('user_refetch');
+        View::renderJson(Auth::getUser()->getContext(Auth::getUser()));
+        
+    }
 
 }

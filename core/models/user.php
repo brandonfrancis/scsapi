@@ -7,6 +7,8 @@ Routes::set('user/logout', 'user#logout');
 Routes::set('user/verify/{userid}/{code}', 'user#verify', false);
 Routes::set('user/verify/resend', 'user#verify_resend');
 Routes::set('user/recover', 'user#recover');
+Routes::set('user/settings/setavatar', 'user#set_avatar');
+Routes::set('user/avatar/{userid}', 'user#get_avatar', false);
 
 /**
  * Class for handling and manipulating users.
@@ -195,7 +197,9 @@ class User {
             'email' => $this->getEmail(),
             'first_name' => $this->getFirstName(),
             'last_name' => $this->getLastName(),
-            'full_name' => $this->getFullName()
+            'full_name' => $this->getFullName(),
+            'has_avatar' => $this->hasAvatar(),
+            'avatarid' => $this->getAvatarAttachmentId()
         );
         if ($user->isAdmin() || $user->getUserId() == $this->getUserId()) {
             $array['email_verified'] = $this->isEmailVerified();
@@ -772,5 +776,52 @@ class User {
     public function emit($endpoint, $data = null) {
         Push::getPushServer($this)->emit($this->getUserId(), $endpoint, $data);
     }
+    
+    /**
+     * Determines whether or not this user has an avatar.
+     * @return boolean
+     */
+    public function hasAvatar() {
+        return !empty($this->row['avatar_attachmentid']);
+    }
+    
+    /**
+     * Gets the id for the attachment that is the user's avatar.
+     * @return int
+     */
+    public function getAvatarAttachmentId() {
+        return intval($this->row['avatar_attachmentid']);
+    }
 
+    /**
+     * Sets the avatar for this user given the attachment it is.
+     * @param Attachment $attachment
+     */
+    public function setAvatar(Attachment $attachment) {
+        
+        // Make sure the attachment is an image
+        if ($attachment->getAttachmentType() != Attachment::ATTACHMENT_TYPE_IMAGE) {
+            throw new Exception('Avatars must be images.');
+        }
+        
+        // Turn the new attachment into a thubmnail
+        $attachment->convertIntoThubmnail();
+        
+        // See if we need to delete an old one
+        if ($this->hasAvatar()) {
+            $oldAvatar = Attachment::fromId($this->getAvatarAttachmentId());
+            $oldAvatar->delete();
+        }
+        
+        // Update the database
+        $query = Database::connection()->prepare('UPDATE user SET avatar_attachmentid = ? WHERE userid = ?');
+        $query->bindValue(1, $attachment->getAttachmentId(), PDO::PARAM_INT);
+        $query->bindValue(2, $this->getUserId(), PDO::PARAM_INT);
+        $query->execute();
+        
+        // Update the local value
+        $this->row['avatar_attachmentid'] = $attachment->getAttachmentId();
+        
+    }
+    
 }
