@@ -132,7 +132,6 @@ class Attachment {
         }
         $imagick = new Imagick();
         $imagick->readimage(self::getStoragePath($this->getAttachmentId()));
-        $imagick->setimagetype('png');
         $imagick->cropthumbnailimage(90, 90);
         $imagick->writeimage();
         
