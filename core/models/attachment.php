@@ -136,6 +136,19 @@ class Attachment {
         $imagick->writeimage();
         
     }
+    
+    /**
+     * Converts this attachment into a JPEG if ir is an image.
+     */
+    public function convertToPNG() {
+        if ($this->getAttachmentType() != self::ATTACHMENT_TYPE_IMAGE) {
+            return;
+        }
+        $imagick = new Imagick();
+        $imagick->readimage(self::getStoragePath($this->getAttachmentId()));
+        $imagick->setimageformat('png');
+        $imagick->writeimage();
+    }
 
     /**
      * Returns the path for a specific attachment id.

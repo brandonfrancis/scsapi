@@ -8,7 +8,7 @@ Routes::set('user/verify/{userid}/{code}', 'user#verify', false);
 Routes::set('user/verify/resend', 'user#verify_resend');
 Routes::set('user/recover', 'user#recover');
 Routes::set('user/settings/setavatar', 'user#set_avatar');
-Routes::set('user/avatar/{userid}', 'user#get_avatar', false);
+Routes::set('user/avatar/{userid}/{attachmentid}.png', 'user#get_avatar', false);
 
 /**
  * Class for handling and manipulating users.
@@ -803,6 +803,9 @@ class User {
         if ($attachment->getAttachmentType() != Attachment::ATTACHMENT_TYPE_IMAGE) {
             throw new Exception('Avatars must be images.');
         }
+        
+        // Turn the image into a png
+        $attachment->convertToPNG();
         
         // Turn the new attachment into a thubmnail
         $attachment->convertIntoThubmnail();
