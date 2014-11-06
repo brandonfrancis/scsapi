@@ -632,8 +632,9 @@ class QuestionAnswer {
      */
     public function hasLiked(User $user) {
         $users = $this->getLikes();
-        foreach ($users as $curUser) {
-            if ($curUser->getUserId() === $user->getUserId()) {
+        var_dump($users);
+        for ($i = 0; $i < count($users); $i++) {
+            if ($users[$i]->getUserId() === $user->getUserId()) {
                 return true;
             }
         }
