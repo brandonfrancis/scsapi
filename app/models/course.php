@@ -222,10 +222,15 @@ class Course {
             
             // Add the entries with all of their questions and answers
             $entries = Entry::forCourse($this);
-            $entry_contexts = array_filter(array_map(function($question, $contextUser) {
-                return $question->getContext($contextUser);
-            }, $entries, count($entries) > 0 ? array_fill(0, count($entries), $user) : array()));
-            $array['entries'] = $entry_contexts;  
+            $entry_contexts = array();
+            foreach ($entries as $entry) {
+                $context = $entry->getContext($user);
+                if ($context == null) {
+                    continue;
+                }
+                array_push($entry_contexts, $context);
+            }
+            $array['entries'] = $entry_contexts;
             
         }
         

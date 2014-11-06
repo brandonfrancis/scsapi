@@ -160,17 +160,20 @@ class Entry {
 
         // Add the questions with all of their answers
         $questions = Question::forEntry($this);
-        $question_contexts = array_filter(array_map(function($question, $contextUser) {
-                    return $question->getContext($contextUser);
-                }, $questions, count($questions) > 0 ? array_fill(0, count($questions), $user) : array()));
+        $question_contexts = array();
+        foreach ($questions as $question) {
+            array_push($question_contexts, $question->getContext($user));
+        }
         $arry['questions'] = $question_contexts;
-
+        
         // Add the attachments in
         $attachments = $this->getAttachments();
-        $attachment_contexts = array_map(function($attachment) {
-            return $attachment->getContext();
-        }, $attachments);
+        $attachment_contexts = array();
+        foreach ($attachments as $attachment) {
+            array_push($attachment_contexts, $attachment->getContext());
+        }
         $arry['attachments'] = $attachment_contexts;
+        
 
         return $arry;
     }

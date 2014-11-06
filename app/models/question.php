@@ -185,9 +185,11 @@ class Question {
             return null;
         }
         $answers = $this->getAnswers();
-        $answers_contexts = array_map(function($user, $contextUser) {
-            return $user->getContext($contextUser);
-        }, $answers, count($answers) > 0 ? array_fill(0, count($answers), $user) : array());
+        $answers_contexts = array();
+        foreach ($answers as $answer) {
+            array_push($answers_contexts, $answer->getContext($user));
+        }
+        
         return array(   
             'questionid' => $this->getQuestionId(),
             'entryid' => $this->getEntryId(),
@@ -562,15 +564,16 @@ class QuestionAnswer {
         
         // Build the likes array
         $likesUsers = $this->getLikes();
-        $likes_contexts = array_map(function($user, $contextUser) { 
-            return $user->getContext($contextUser); 
-        }, $likesUsers, count($likesUsers) > 0 ? array_fill(0, count($likesUsers), $user) : array());
+        $likes_contexts = array();
+        foreach ($likesUsers as $like) {
+            array_push($likes_contexts, $like->getContext($user));
+        }
         
         // See if the professor has liked this answer
         $professorLiked = false;
         $course = Course::fromId(Question::fromId($this->getQuestionId())->getCourseId());
-        foreach ($likesUsers as $user) {
-            if ($course->canEdit($user)) {
+        foreach ($likesUsers as $curUser) {
+            if ($course->canEdit($curUser)) {
                 $professorLiked = true;
                 break;
             }
