@@ -209,7 +209,6 @@ class Course {
      */
     public function getContext(User $user) {
         
-        var_dump($user->getUserId());
         $array = array(
             'courseid' => $this->getCourseId(),
             'can_view' => $this->canView($user),
@@ -224,7 +223,6 @@ class Course {
             // Add the entries with all of their questions and answers
             $entries = Entry::forCourse($this);
             $entry_contexts = array_filter(array_map(function($question, $contextUser) {
-                var_dump($contextUser->getUserId());
                 return $question->getContext($contextUser);
             }, $entries, count($entries) > 0 ? array_fill(0, count($entries), $user) : array()));
             $array['entries'] = $entry_contexts;  
