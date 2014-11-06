@@ -4,6 +4,7 @@ Routes::set('user/create', 'user#create');
 Routes::set('user/fetch', 'user#fetch');
 Routes::set('user/login', 'user#login');
 Routes::set('user/logout', 'user#logout');
+Routes::set('user/changepassword', 'user#change_password');
 Routes::set('user/verify/{userid}/{code}', 'user#verify', false);
 Routes::set('user/verify/resend', 'user#verify_resend');
 Routes::set('user/recover', 'user#recover');

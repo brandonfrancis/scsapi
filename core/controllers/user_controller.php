@@ -28,6 +28,28 @@ class user_controller {
         
     }
     
+    function change_password() {
+        
+        // Get the passwords
+        $currentPassword = Input::get('currentpassword');
+        $newPassword = Input::get('newpassword');
+        
+        // Check the current password
+        if (!Auth::getUser()->isPassword($currentPassword)) {
+            throw new Exception('Incorrect current password given.');
+        }
+        
+        // Set the new password
+        Auth::getUser()->changePassword($newPassword);
+        
+        // Update the session and cookies
+        Auth::setUser(Auth::getUser(), $newPassword);
+        
+        // Give back the new user
+        View::renderJson(Auth::getUser()->getContext(Auth::getUser()));
+        
+    }
+    
     function fetch() {
         View::renderJson(Auth::getUser()->getContext(Auth::getUser()));
     }
