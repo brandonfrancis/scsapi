@@ -633,7 +633,7 @@ class QuestionAnswer {
     public function hasLiked(User $user) {
         $users = $this->getLikes();
         foreach ($users as $curUser) {
-            if ($curUser->getUserId() == $user->getUserId()) {
+            if ($curUser->getUserId() === $user->getUserId()) {
                 return true;
             }
         }
