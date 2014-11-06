@@ -43,13 +43,13 @@ class Input {
     public static function get($key, $default = null) {
         self::initialize();
         if (isset(self::$runtimeVariables[$key])) {
-            return self::$runtimeVariables[$key];
+            return self::sanitize(self::$runtimeVariables[$key]);
         } else if (isset(Routes::getPathVariables()[$key])) {
-            return Routes::getPathVariables()[$key];
+            return self::sanitize(Routes::getPathVariables()[$key]);
         } else if (isset(self::$postVariables[$key])) {
-            return self::$postVariables[$key];
+            return self::sanitize(self::$postVariables[$key]);
         } else if (isset(self::$getVariables[$key])) {
-            return self::$getVariables[$key];
+            return self::sanitize(self::$getVariables[$key]);
         }
         if ($default === null) {
             throw new Exception('The required input "' . $key  .'" does not exist');
