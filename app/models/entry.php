@@ -148,6 +148,7 @@ class Entry {
         $arry = array(
             'entryid' => $this->getEntryId(),
             'courseid' => $this->getCourseId(),
+            'created_by' => User::fromId($this->getCreatorUserId())->getContext($user),
             'can_edit' => $this->canEdit($user),
             'is_due' => $this->hasDueTime(),
             'due_at' => $this->getDueTime(),
