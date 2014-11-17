@@ -237,9 +237,12 @@ class Entry {
         $course = Course::fromId($this->getCourseId());
         if ($course->canEdit($user)) {
             return true;
+        } else if ($this->getCreatorUserId() == $user->getUserId()) {
+            return true;
+        } else if ($this->isVisible() && $this->getDisplayTime() < time()) {
+            return true;
         }
-        return ($course->canView($user) && $this->isVisible()) ||
-                $user->getUserId() == $this->getCreatorUserId();
+        return false;
     }
     
     /**
