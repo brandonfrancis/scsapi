@@ -143,6 +143,9 @@ class course_controller {
             throw new Exception('You cannot remove users from this course');
         }
         
+        // Get the user id to remove
+        $email = Input::get('list');
+        $user = User::fromEmail($email);        
         
         // Make sure permissions are not being overstepped
         if ($course->getCreatorUserId() != Auth::getUser()->getUserId() &&
@@ -150,9 +153,7 @@ class course_controller {
             throw new Exception('You are not allowed to remove the creator from the class.');
         }
         
-        // Get the user id to remove
-        $email = Input::get('list');
-        $user = User::fromEmail($email);        
+        
         
         // Remove the user
         $course->removeUser($user);
