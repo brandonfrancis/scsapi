@@ -232,8 +232,20 @@ class Course {
             }
             $array['entries'] = $entry_contexts;
             
+            // Put the professor and users into the context
+            $professor_contexts = array();
+            foreach ($this->professors as $professor) {
+                array_push($professor_contexts, $professor->getContext($user));
+            }
+            $student_contexts = array();
+            foreach ($this->users as $student) {
+                array_push($student_contexts, $student->getContext($user));
+            }
+            $array['professors'] = $professor_contexts;
+            $array['students'] = $student_contexts;
+            
         }
-        
+
         // Return the context
         return $array;
     }
