@@ -18,6 +18,15 @@ class entry_controller {
             throw new Exception('You are not allowed to create an entry in this course.');
         }
         $entry = Entry::create(Auth::getUser(), $course, Input::get('title'), Input::get('description'));
+        if (Input::exists('due_at')) {
+            $entry->setDueTime(Input::get('due_at'));
+        }
+        if (Input::exists('display_at')) {
+            $entry->setDisplayTime(Input::get('display_at'));
+        }
+        if (Input::exists('visible')) {
+            $entry->setVisible(Input::getBoolean('visible'));
+        }
         View::renderJson($entry->getContext(Auth::getUser()));
     }
     
