@@ -74,7 +74,7 @@ class Course {
     public static function forUser(User $user) {
         
         // Do the query
-        $query = Database::connection()->prepare('SELECT course.* FROM course, course_user'
+        $query = Database::connection()->prepare('SELECT DISTINCT course.* FROM course, course_user'
                 . ' WHERE (course.courseid = course_user.courseid AND course_user.userid = ?) OR (course.created_by = ?) ORDER BY course.title');
         $query->bindValue(1, $user->getUserId(), PDO::PARAM_INT);
         $query->bindValue(2, $user->getUserId(), PDO::PARAM_INT);
