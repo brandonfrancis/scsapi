@@ -74,7 +74,7 @@ define('DATABASE_USER_PASSWORD', '23moa)@3jian@NN');
  * The database name to use.
  * Default: scs
  */
-define('DATABASE_NAME', 'scs');
+define('DATABASE_NAME', 'scs2');
 
 
 

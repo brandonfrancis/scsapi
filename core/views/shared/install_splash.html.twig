@@ -10,15 +10,17 @@
     </div>
     <div class="section section-dark">
         <div class="container">
-            {{page.result}}
+            <div>{{page.result}}</div>
+            {%if page.show_button %}
+                <div>
+                    <form method="POST">
+                        <input type="submit" value="Install" /> 
+                        <input type="hidden" name="do_install" value="true" />
+                        <input type="hidden" name="_token" value="{{_token}}" />
+                    </form>
+                </div>
+            {% endif %}
         </div>
     </div>
-    {%if page.show_button %}
-        <form method="POST">
-            <input type="submit" value="Install" /> 
-            <input type="hidden" name="do_install" value="true" />
-            <input type="hidden" name="_token" value="{{_token}}" />
-        </form>
-    {% endif %}
 {% endblock %}
 
