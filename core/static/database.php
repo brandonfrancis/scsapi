@@ -45,6 +45,7 @@ class Database {
         $pdo = new PDO("$driver:host=$host;dbname=$database_name;charset=$charset",
                 self::$config['username'], self::$config['password']);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
         return $pdo;
     }
     
