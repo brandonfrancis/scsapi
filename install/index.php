@@ -29,7 +29,7 @@ if (Input::exists('do_install')) {
         exit;
     }
     
-    $intall_sql = <<< STR
+    $install_sql = <<<STR
 -- Create syntax for TABLE 'answer_likes'
 CREATE TABLE `answer_likes` (
   `answerid` int(11) unsigned NOT NULL,
@@ -181,6 +181,7 @@ CREATE TABLE `user_notification` (
   CONSTRAINT `user_notification_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `user` (`userid`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 STR;
+    
     $install_query = Database::connection()->prepare($install_sql);
     if (!$install_query->execute()) {
         View::renderView('install_result', array('result' => 'Nothing was done. Query failed.'));
