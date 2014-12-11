@@ -189,6 +189,7 @@ STR;
         View::renderView('install_result', array('result' => 'Nothing was done. Query failed.'));
         exit;
     }
+    $install_query->fetchAll();
     
     // Now create the first user
     $admin = User::create('Admin', 'Admin', 'admin@admin.com', 'abc123');
@@ -197,6 +198,7 @@ STR;
     $adminQuery = Database::connection()->prepare('UPDATE user SET is_admin = 1 WHERE userid = ?');
     $adminQuery->bindValue(1, $admin->getUserId(), PDO::PARAM_INT);
     $adminQuery->execute();
+    $adminQuery->fetchAll();
     
     // Create an initial course
     Course::create($admin, 'Test Course', 'testcourse-001');
