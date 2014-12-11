@@ -9,9 +9,10 @@ try {
 
     // Get the connection
     $connection = Database::connection();
+    
 } catch (Exception $ex) {
 
-    View::renderView('install_splash', array('show_button' => fasle, 'result' => 'Database connection was not successful.'));
+    View::renderView('install_splash', array('show_button' => false, 'result' => 'Database connection was not successful.'));
     
 }
 
