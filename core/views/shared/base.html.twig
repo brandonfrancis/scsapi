@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title></title>
+        <title>{{ page_title }}</title>
+        <link rel="stylesheet" href="{{ public_path('css/main.css') }}" />
     </head>
     <body>
+        {% block content %}
+        {% endblock %}
     </body>
 </html>

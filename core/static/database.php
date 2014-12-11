@@ -9,12 +9,12 @@ class Database {
     * Configuration for the database connection.
     */
     private static $config = array(
-        'driver' => 'mysql',
-        'host' => 'localhost',
-        'database_name' => 'scs',
+        'driver' => DATABASE_DRIVER,
+        'host' => DATABASE_HOST,
+        'database_name' => DATABASE_NAME,
         'charset' => 'utf8',
-        'username' => 'scs_user',
-        'password' => '23moa)@3jian@NN'
+        'username' => DATABASE_USER,
+        'password' => DATABASE_USER_PASSWORD
     );
     
     /**

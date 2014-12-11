@@ -1,24 +1,5 @@
 <?php
 
-// Display errors
-ini_set('display_errors', '1');
-
-// Make sure we only allow origins from specific sources
-$origin = filter_input(INPUT_SERVER, 'HTTP_ORIGIN');
-if ($origin == 'http://localhost' || $origin == 'https://localhost' ||
-        $origin == 'http://scs.game-tuts.com' || $origin == 'https://scd.game-tuts.com') {
-    header('Access-Control-Allow-Origin: ' . $origin);
-} else if ($origin == '') {
-    header('Access-Control-Allow-Origin: http://localhost');
-}
-header('Access-Control-Allow-Credentials: true');
-
-// Do some cloudflare fixes if necessary
-if (!empty(filter_input(INPUT_SERVER, 'HTTP_CF_CONNECTING_IP'))) {
-    // Let's do things to fix cloudflare issues
-    $_SERVER['REMOTE_ADDR'] = filter_input(INPUT_SERVER, 'HTTP_CF_CONNECTING_IP');
-}
-
 /**
  * Key used for development purposes.
  */
@@ -43,11 +24,20 @@ define('APP_EMAIL', 'noreply@scs.game-tuts.com');
 define('APP_ABSOLUTE_URL', 'https://scsapi.game-tuts.com');
 
 /**
+ * The domain name for the GUI.
+ * This is used to allow cross domain scripting if
+ * it is on another domain.
+ * Do not include http://, https://, or a trailing slash.
+ */
+define('APP_GUI_DOMAIN_NAME', 'scs.game-tuts.com');
+
+/**
  * The relative url of the website.
- *  e.g. If the site is under a directory /forums
- *  this value should be /forums
- *  SHOULD have an initial slash.
- *  Do not include a trailing slash.
+ * e.g. If the site is under a directory /forums
+ * this value should be /forums
+ * SHOULD have an initial slash, unless empty.
+ * Do not include a trailing slash.
+ * Default value: ''
  */
 define('APP_RELATIVE_URL', '');
 
@@ -56,6 +46,38 @@ define('APP_RELATIVE_URL', '');
  * Should be nothing if rewriting is being used to pass the path.
  */
 define('APP_PATH_FEEDER', '');
+
+/**
+ * The database driver to use.
+ * Default: mysql
+ */
+define('DATABASE_DRIVER', 'mysql');
+
+/**
+ * The database host to use.
+ * Default: localhost
+ */
+define('DATABASE_HOST', 'localhost');
+
+/**
+ * The database user to use.
+ * Default: scs_user
+ */
+define('DATABASE_USER', 'scs_user');
+
+/**
+ * The database user password to use.
+ */
+define('DATABASE_USER_PASSWORD', '23moa)@3jian@NN');
+
+/**
+ * The database name to use.
+ * Default: scs
+ */
+define('DATABASE_NAME', 'scs');
+
+
+
 
 /*---------------------------------------------------------------
  * 
@@ -99,6 +121,26 @@ define('APP_CONTROLLERS_PATH', APP_APP_PATH . '/controllers');
 define('APP_CONTROLLERS_PATH_CORE', APP_CORE_PATH . '/controllers');
 define('APP_VIEWS_PATH', APP_APP_PATH . '/views');
 define('APP_VIEWS_PATH_CORE', APP_CORE_PATH . '/views');
+
+// Display errors
+ini_set('display_errors', '1');
+
+// Make sure we only allow origins from specific sources
+$origin = filter_input(INPUT_SERVER, 'HTTP_ORIGIN');
+if ($origin == 'http://localhost' || $origin == 'https://localhost' ||
+        $origin == 'http://' . APP_GUI_DOMAIN_NAME || $origin == 'https://' . APP_GUI_DOMAIN_NAME) {
+    header('Access-Control-Allow-Origin: ' . $origin);
+} else if ($origin == '') {
+    header('Access-Control-Allow-Origin: http://localhost');
+}
+header('Access-Control-Allow-Credentials: true');
+
+// Do some cloudflare fixes if necessary
+if (!empty(filter_input(INPUT_SERVER, 'HTTP_CF_CONNECTING_IP'))) {
+    // Let's do things to fix cloudflare issues
+    $_SERVER['REMOTE_ADDR'] = filter_input(INPUT_SERVER, 'HTTP_CF_CONNECTING_IP');
+}
+
 
 /*
  * Pull in all of the backend static files
