@@ -10,10 +10,10 @@
     </div>
     <div class="section section-dark">
         <div class="container">
-            {{result}}
+            {{page.result}}
         </div>
     </div>
-    {%if show_button %}
+    {%if page.show_button %}
         <form method="POST">
             <input type="submit" value="Install" /> 
             <input type="hidden" name="do_install" value="true" />
