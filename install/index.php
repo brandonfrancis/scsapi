@@ -189,7 +189,11 @@ STR;
         View::renderView('install_result', array('result' => 'Nothing was done. Query failed.'));
         exit;
     }
-    $install_query->fetchAll();
+    try {
+        $install_query->fetchAll();
+    } catch (Exception $ex) {
+        unset($ex);
+    }
     
     // Now create the first user
     $admin = User::create('Admin', 'Admin', 'admin@admin.com', 'abc123');
