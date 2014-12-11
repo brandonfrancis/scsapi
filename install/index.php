@@ -187,6 +187,17 @@ STR;
         View::renderView('install_result', array('result' => 'Nothing was done. Query failed.'));
         exit;
     }
+    
+    // Now create the first user
+    $admin = User::create('Admin', 'Admin', 'admin@admin.com', 'abc123');
+    
+    // Make the user an admin
+    $adminQuery = Database::connection()->prepare('UPDATE user SET is_admin = 1 WHERE userid = ?');
+    $adminQuery->bindValue(1, $admin->getUserId(), PDO::PARAM_INT);
+    $adminQuery->execute();
+    
+    // Create an initial course
+    Course::create($admin, 'Test Course', 'testcourse-001');
 
     // We're doing the installation
     View::renderView('install_result', array('result' => 'Installed! Close and delete this script.'));
