@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+{% set page_title = 'Install SCS' %}
+
+{% block content %}
+    <link rel="stylesheet" href="{{public_path('css/install.css')}}"
+          <div class="section section-primary">
+        <div class="container header-text">
+            Welcome to SCS! This page will help you get your database ready.
+        </div>
+    </div>
+    <div class="section section-dark">
+        <div class="container">
+            {{ result }}
+        </div>
+    </div>
+    {%if show_button %}
+        <form method="POST">
+            <input type="submit" value="Install" /> 
+            <input type="hidden" name="do_install" value="true" />
+            <input type="hidden" name="_token" value="{{_token}}" />
+        </form>
+    {% endif %}
+{% endblock %}
+

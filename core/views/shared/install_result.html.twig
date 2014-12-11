@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+{% set page_title = 'Install SCS' %}
+
+{% block content %}
+    <link rel="stylesheet" href="{{public_path('css/install.css')}}"
+          <div class="section section-primary">
+        <div class="container header-text">
+            The results of the installation are shown below.
+        </div>
+    </div>
+    <div class="section section-dark">
+        <div class="container">
+            {{ result }}
+        </div>
+    </div>
+{% endblock %}
+

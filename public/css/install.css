@@ -1,0 +1,21 @@
+html {
+    height: 100%;
+    opacity: 0.99;
+    font-family: "helveltica", sans-serif;
+    background-color: #f6f6f8;
+    -webkit-font-smoothing: antialiased;
+}
+
+.section {
+    background-color: white;
+    width: 1024px;
+    margin: auto;
+    border: 1px solid #c5c5c5;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.header-text {
+    font-size: 20px;
+}
