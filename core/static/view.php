@@ -135,8 +135,7 @@ class View {
         $context = array_merge(
                 array(
                     '_token' => Session::getToken(),
-                    'app' => array('alerts' => Log::getAlerts(), 'notices' => Log::getNotices()),
-                    'user' => Auth::getUser()->getContext(Auth::getUser())
+                    'app' => array('alerts' => Log::getAlerts(), 'notices' => Log::getNotices())
                 ), array('page' => $context));
         return self::$twig->render($name . '.html.twig', $context);
     }
