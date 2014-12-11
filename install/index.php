@@ -16,7 +16,7 @@ try {
 }
 
 // See if we're doing the installation
-if (Input::exixts('do_install')) {
+if (Input::exists('do_install')) {
 
     // We're doing the installation
     View::renderView('install_result', array('result' => 'Nothing was done.'));
