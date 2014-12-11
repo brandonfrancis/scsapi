@@ -30,10 +30,11 @@ if (Input::exists('do_install')) {
     }
     
     $install_sql = <<<STR
+SET foreign_key_checks = 0;
 -- Create syntax for TABLE 'answer_likes'
 CREATE TABLE `answer_likes` (
   `answerid` int(11) unsigned NOT NULL,
-  `userid` int(11) unsigned NOT NULL,
+  `userid` int(11) unsigned NOT NULL DEFAULT '0',
   `created_at` int(11) unsigned NOT NULL,
   PRIMARY KEY (`answerid`,`userid`),
   KEY `userid` (`userid`),
@@ -103,6 +104,22 @@ CREATE TABLE `entry_attachment` (
   KEY `attachmentid` (`attachmentid`),
   CONSTRAINT `entry_attachment_ibfk_2` FOREIGN KEY (`entryid`) REFERENCES `entry` (`entryid`),
   CONSTRAINT `entry_attachment_ibfk_1` FOREIGN KEY (`attachmentid`) REFERENCES `attachment` (`attachmentid`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- Create syntax for TABLE 'flipflop_image'
+CREATE TABLE `flipflop_image` (
+  `imageid` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `url` varchar(250) NOT NULL DEFAULT '',
+  `description` varchar(250) DEFAULT NULL,
+  PRIMARY KEY (`imageid`)
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
+
+-- Create syntax for TABLE 'flipflop_tags'
+CREATE TABLE `flipflop_tags` (
+  `imageid` int(11) unsigned NOT NULL,
+  `tag` varchar(50) NOT NULL DEFAULT '',
+  PRIMARY KEY (`imageid`),
+  CONSTRAINT `flipflop_tags_ibfk_1` FOREIGN KEY (`imageid`) REFERENCES `flipflop_image` (`imageid`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Create syntax for TABLE 'question'
@@ -180,6 +197,7 @@ CREATE TABLE `user_notification` (
   KEY `userid` (`userid`),
   CONSTRAINT `user_notification_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `user` (`userid`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET foreign_key_checks = 1;
 STR;
     
     $install_query = Database::connection()->prepare($install_sql);
